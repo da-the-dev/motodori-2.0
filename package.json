@@ -2,15 +2,21 @@
   "name": "motodori-2.0",
   "version": "0.0.1",
   "description": "New and better version of Kanto for motodori",
-  "main": "index.js",
+  "main": "out/index.js",
   "scripts": {
-    "test": ".info"
+    "test": "nodemon test.js",
+    "start": "nodemon . --delay 3"
   },
   "author": "da_the_dev",
   "license": "GPL-3.0-or-later",
   "dependencies": {
     "canvas": "^2.8.0",
     "discord.js": "^12.5.3",
-    "dotenv": "^10.0.0"
+    "dotenv": "^10.0.0",
+    "log4js": "^6.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "^15.12.2",
+    "typescript": "^4.3.2"
   }
 }
