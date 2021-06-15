@@ -1,0 +1,11 @@
+{
+  "name": "motodori-2.0",
+  "version": "0.0.1",
+  "description": "New and better version of Kanto for motodori",
+  "main": "index.js",
+  "scripts": {
+    "test": ".info"
+  },
+  "author": "da_the_dev",
+  "license": "GPL-3.0-or-later"
+}

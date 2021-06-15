@@ -1,0 +1,9 @@
+
+package-lock.js
+node_modules
+
+test.*
+.env
+index.js
+
+.vscode
