@@ -4,3 +4,7 @@ It is time ladies and gentelmen! This is a brand new version of Kanto bot for th
 
 **Table** of contents
 - [Kanto 2.0](#kanto-20)
+- [Changelog](#changelog)
+
+# Changelog
+Link to the [changelog](changelog.md) with all of the notable changes
