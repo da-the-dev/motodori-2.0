@@ -18,6 +18,7 @@ The format is based on [Keep a Changelog][Keep a Changelog] and this project adh
   - Added `/utility/embed.ts` that brings a standard embed reply system
   - Added `.av` command in `/commands/av.ts`
   - Added `.info` command in `/commands/info.ts`
+  - Added and enabled Dependabot
 
 ### Changed
  - Changed default prefix from `.` to `!` untill release
