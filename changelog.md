@@ -3,6 +3,30 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/) and this project adheres to [Semantic Versioning](https://semver.org/).
 
+# Changelog
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog][Keep a Changelog] and this project adheres to [Semantic Versioning][Semantic Versioning].
+
+## [Latest]
+---
+## [0.0.3] - 2021-06-15
+### Added
+  - Added *"esModuleInterop"* to `tsconfig.json` in order to help with imports
+  - Added a mandatory *"help"* function to `BaseCommand.ts` interface to be used when user needs additional help with a command
+  - Added help function support in `index.ts`
+  - Added `/utility/embed.ts` that brings a standard embed reply system
+  - Added `.av` command in `/commands/av.ts`
+  - Added `.info` command in `/commands/info.ts`
+
+### Changed
+ - Changed default prefix from `.` to `!` untill release
+ - Changed `ready` event log in `index.ts` to 'Bot started'
+ - Changed the way command suggestion works. If a simmular command wasn't found, no reply, reply with a suggestion otherwise
+
+### Removed
+  - Removed unused imports from `index.ts`
+
 ## [0.0.2] - 15-06-2021
 
 ### Added
@@ -16,7 +40,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/) and this 
   - Added `test.ts` as a test command
   - Added `/out` directory to `.gitignore` to exclude TypeScript compiled files
 ### Changed
-  - Changed `test` script to start `test.js` file via *nodemon*
+  - Changed `test` script to start `test.s` file via *nodemon*
   
 ## [0.0.1] - 15-06-2021
 
@@ -26,3 +50,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/) and this 
   - Added `README.md`
   - Added `.gitignore`
   - Added `discord.js`, `dotenv` and `canvas` as new dependencies
+
+
+<!-- Links -->
+[Keep a Changelog]: https://keepachangelog.com/
+[Semantic Versioning]: https://semver.org/
+
+<!-- Versions -->
+[Latest]: https://github.com/da-the-dev/motodori-2.0/compare/0.0.3...HEAD
+[0.0.3]: https://github.com/da-the-dev/motodori-2.0/compare/v0.0.2..v0.0.3
+[0.0.2]: https://github.com/da-the-dev/motodori-2.0/compare/0.0.2...0.0.1
+[0.0.1]: https://github.com/da-the-dev/motodori-2.0/releases/v0.0.1
