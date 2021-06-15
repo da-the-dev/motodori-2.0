@@ -1,7 +1,7 @@
 // Libraries
-import { Base, Client, Collection } from 'discord.js'
+import { Client, Collection } from 'discord.js'
 import { config } from 'dotenv'; config()
-import { close, readdirSync } from 'fs'
+import { readdirSync } from 'fs'
 import { getLogger } from "log4js";
 import { BaseCommand } from './intefaces/BaseCommand'
 import simStr from './utility/closestString'
