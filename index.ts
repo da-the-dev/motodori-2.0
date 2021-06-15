@@ -1,10 +1,10 @@
 // Libraries
 import { Base, Client, Collection } from 'discord.js'
 import { config } from 'dotenv'; config()
-import { readdirSync } from 'fs'
+import { close, readdirSync } from 'fs'
 import { getLogger } from "log4js";
 import { BaseCommand } from './intefaces/BaseCommand'
-import * as simStr from './utility/closestString'
+import simStr from './utility/closestString'
 
 // Logger setup
 const logger = getLogger('Kanto bot')
@@ -21,7 +21,7 @@ process.on('unhandledRejection', (err: Error) => {
 })
 
 // Client setup
-const prefix = '.'
+const prefix = '!'
 const client = new Client({ partials: ['CHANNEL', 'MESSAGE', 'REACTION'] })
 const commands: Collection<string, BaseCommand> = new Collection()
 readdirSync('./commands').filter(cn => cn.endsWith('.ts')).forEach(async cn => {
@@ -33,7 +33,7 @@ client.login(process.env.TOKEN)
 
 // Once the bot starts
 client.once('ready', () => {
-    logger.log(null, '123')
+    logger.log(null, 'Bot started')
 })
 
 // Once the bot recieves a message
@@ -42,13 +42,16 @@ client.on('message', msg => {
         const args = msg.content.slice(1).split(' ').map(e => e.trim())
         const command = args.shift()
 
-
         // Try to execute a command and suggest closest one if none found
         try {
-            commands.get(command).foo(msg, args, client)
+            const execCommand = commands.get(command)
+            if (args[0] === 'help')
+                execCommand.help(msg)
+            else
+                execCommand.foo(msg, args, client)
         } catch (err) {
             if (err instanceof TypeError) {
-                let closeCommand = ''
+                let closeCommand: string
                 let max = 0
                 for (let cn of commands.keys())
                     if (max < Math.max(max, simStr(cn, command))) {
@@ -56,7 +59,8 @@ client.on('message', msg => {
                         closeCommand = cn
                     }
 
-                msg.channel.send(`Неверная команда! Возможно Вы имели ввиду \`${closeCommand}\`?`)
+                if (closeCommand)
+                    msg.channel.send(`Неверная команда! Возможно, Вы имели ввиду \`${closeCommand}\`?`)
             } else {
                 logger.error(err)
             }
