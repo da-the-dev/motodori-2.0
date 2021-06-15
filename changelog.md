@@ -21,8 +21,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/) and this 
 ## [0.0.1] - 15-06-2021
 
 ### Added
-  - Added changelog.md
-  - Added LICENSE.md
-  - Added README.md
-  - Added .gitignore
-  - Added discord.js, dotenv and canvas as new dependencies
+  - Added `changelog.md`
+  - Added `LICENSE.md`
+  - Added `README.md`
+  - Added `.gitignore`
+  - Added `discord.js`, `dotenv` and `canvas` as new dependencies
