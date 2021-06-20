@@ -1,8 +1,8 @@
 {
     "compilerOptions": {
         "lib": ["es2015", "ES2020"],
-        "target": "es5",
-        "module": "commonjs",
+        "target": "es6",
+        "module": "CommonJS",
         "sourceMap": true,
         "pretty": true,
         "allowJs": true,
