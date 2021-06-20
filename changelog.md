@@ -16,7 +16,7 @@ The format is based on [Keep a Changelog][Keep a Changelog] and this project adh
   - Added `DB.ts` with `Connection` and `DBUser` class. They are used to easily communicate with Mongo database.
   - Added `.bal` command in `bal.ts`, which shows member's balance.
   - Added `.transfer` command in `transfer.ts`, which allows members to transfer money between each other.
-  - Added periods at the end of sentences in `changelog.md`
+  - Added periods at the end of sentences in `changelog.md`.
 ### Changed
   - Changed target in `tsconfig.json` from `ES5` to `ES6`.
   - Changed pinging in `embed.ts` to make first content's letter lowercase.
