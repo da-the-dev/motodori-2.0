@@ -4,6 +4,7 @@ import { config } from 'dotenv'; config()
 import { readdirSync } from 'fs'
 import { getLogger } from "log4js";
 import { BaseCommand } from './interfaces/BaseCommand'
+import { Connection } from './classes/DB'
 import simStr from './utility/closestString'
 
 // Logger setup
@@ -14,11 +15,30 @@ export default logger
 // Handling errors
 process.on('uncaughtException', (err: Error) => {
     logger.fatal(`${err.stack}`)
+    Connection.closeAll()
     process.exit(1)
 })
 process.on('unhandledRejection', (err: Error) => {
-    logger.error(`${err.stack}`)
+    if (err.name === 'usererror')
+        logger.warn(err.message)
+    else
+        logger.error(`${err.stack}`)
 })
+// And restarts
+process.on('SIGINT', () => {
+    logger.mark('Bot process terminated')
+    Connection.closeAll()
+    process.exit(0)
+})
+function exitHandler(options, exitCode) {
+    if (options.cleanup) {
+        logger.mark('Bot process restarted via nodemon')
+        Connection.closeAll()
+    }
+    if (options.exit) process.exit();
+}
+process.on('SIGUSR1', exitHandler.bind(null, { exit: true, cleanup: true }));
+process.on('SIGUSR2', exitHandler.bind(null, { exit: true, cleanup: true }));
 
 // Client setup
 const prefix = '!'
@@ -32,8 +52,13 @@ readdirSync('./commands').filter(cn => cn.endsWith('.ts')).forEach(async cn => {
 client.login(process.env.TOKEN)
 
 // Once the bot starts
-client.once('ready', () => {
-    logger.log(null, 'Bot started')
+client.once('ready', async () => {
+    await Promise.all([
+        // new Connection().connect(),
+        // new Connection().connect(),
+        new Connection().connect()
+    ])
+    logger.info('Bot started')
 })
 
 // Once the bot recieves a message
