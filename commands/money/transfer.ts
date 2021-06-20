@@ -1,6 +1,6 @@
-import { BaseCommand } from '../headers/interfaces'
-import { embed, logger } from '../headers/utility'
-import { DBUser } from '../headers/classes'
+import { BaseCommand } from '../../headers/interfaces'
+import { embed, logger } from '../../headers/utility'
+import { DBUser } from '../../headers/classes'
 
 const sMsg = 'Передача валюты'
 const command: BaseCommand = {

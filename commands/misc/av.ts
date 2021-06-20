@@ -1,6 +1,6 @@
 import { MessageEmbed } from 'discord.js'
-import { BaseCommand } from '../headers/interfaces'
-import { embed } from '../headers/utility'
+import { BaseCommand } from '../../headers/interfaces'
+import { embed } from '../../headers/utility'
 
 const sMsg = 'Просмотр аватара'
 /** @example Usage: `.av @member` */
