@@ -92,7 +92,8 @@ The format is based on [Keep a Changelog][Keep a Changelog] and this project adh
 [Semantic Versioning]: https://semver.org/
 
 <!-- Versions -->
-[Latest]: https://github.com/da-the-dev/motodori-2.0/compare/0.1.0...HEAD
+[Latest]: https://github.com/da-the-dev/motodori-2.0/compare/0.2.0...HEAD
+[0.2.0]: https://github.com/da-the-dev/motodori-2.0/compare/v0.1.1..v0.2.0
 [0.1.1]: https://github.com/da-the-dev/motodori-2.0/compare/v0.1.0..v0.1.1
 [0.1.0]: https://github.com/da-the-dev/motodori-2.0/compare/v0.0.3..v0.1.0
 [0.0.3]: https://github.com/da-the-dev/motodori-2.0/compare/v0.0.2..v0.0.3
