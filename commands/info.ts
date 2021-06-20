@@ -1,10 +1,8 @@
 import { Client, MessageEmbed } from 'discord.js'
-import { BaseCommand } from '../intefaces/BaseCommand'
+import { BaseCommand } from '../interfaces/BaseCommand'
 import embed from '../utility/embed'
 
-/**
- * Returns bot's uptime as a string
- */
+/** Returns bot's uptime as a string */
 function getTime(client: Client) {
     const date = new Date(client.uptime)
     const hours = (date.getHours() + date.getTimezoneOffset() / 60).toString()
@@ -15,9 +13,7 @@ function getTime(client: Client) {
 }
 
 const sMsg = 'Информация о боте'
-/**
- * @example Usage: `.info`
- */
+/** @example Usage: `.info` */
 const command: BaseCommand = {
     foo: (msg, args, client) => {
         const memoryUsed = process.memoryUsage().heapUsed / 1024 / 1024

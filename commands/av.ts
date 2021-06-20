@@ -1,11 +1,9 @@
 import { MessageEmbed } from 'discord.js'
-import { BaseCommand } from '../intefaces/BaseCommand'
+import { BaseCommand } from '../interfaces/BaseCommand'
 import embed from '../utility/embed'
 
 const sMsg = 'Просмотр аватара'
-/**
- * @example Usage: `.av @member`
- */
+/** @example Usage: `.av @member` */
 const command: BaseCommand = {
     foo: (msg, args, client) => {
         const mMember = msg.mentions.members.first() || msg.member
