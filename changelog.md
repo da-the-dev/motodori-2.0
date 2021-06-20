@@ -10,28 +10,40 @@ The format is based on [Keep a Changelog][Keep a Changelog] and this project adh
 
 ## [Latest]
 ---
-## [0.1.1] - 2021-06-20
+## [0.2.0] - 2021-06-20 ⏤ Restructuring update
+### Added
+  - Added `Connection.ts` and `DBUser.ts` which contain classes from the removed `DB.ts`.
+  - Added `/headers` which contains `classes.ts`, `interfaces.ts` and `utility.ts` which export modules from their respective folders.
+### Changed
+  - Disabled *esModuleInterop* in `tsconfig.json`
+### Removed
+  - Removed `DB.ts` and moved classes from it into separate files.
+### Fixed
+  - Fixed imports in all files.
+---
+## [0.1.1] - 2021-06-20 ⏤ 0.1.0 Hotfix #1
 
 ### Fixed
-  - Fixed an issue where members could transfer more currency than they have
-## [0.1.0] - 2021-06-20
+  - Fixed an issue where members could transfer more currency than they have.
+## [0.1.0] - 2021-06-20 ⏤ Database update
 ### Added
   - Addded `DBInterfaces.ts` with all database-related interfaces.
   - Added `DB.ts` with `Connection` and `DBUser` class. They are used to easily communicate with Mongo database.
   - Added `.bal` command in `bal.ts`, which shows member's balance.
   - Added `.transfer` command in `transfer.ts`, which allows members to transfer money between each other.
+  - Added server setup message in `index.ts` and `/utility/serverSetup.ts`.
   - Added periods at the end of sentences in `changelog.md`.
 ### Changed
   - Changed target in `tsconfig.json` from `ES5` to `ES6`.
   - Changed pinging in `embed.ts` to make first content's letter lowercase.
+### Removed
+  - Removed `as MessageEmbed` from `av.ts` and `info.ts` in `help` function.
 ### Fixed
   - Fixed `/interface` folder name from `/inteface`.
   - Fixed imports in `av.ts` and `info.ts`.
 
-### Removed
-  - Removed `as MessageEmbed` from `av.ts` and `info.ts` in `help` function.
 ---
-## [0.0.3] - 2021-06-15
+## [0.0.3] - 2021-06-15 ⏤ First commands
 
 ### Added
   - Added *"esModuleInterop"* to `tsconfig.json` in order to help with imports.
@@ -50,7 +62,7 @@ The format is based on [Keep a Changelog][Keep a Changelog] and this project adh
 ### Removed
   - Removed unused imports from `index.ts`.
 ---
-## [0.0.2] - 15-06-2021
+## [0.0.2] - 15-06-2021 ⏤ First steps
 
 ### Added
   - Added TypeScript support.
@@ -65,7 +77,7 @@ The format is based on [Keep a Changelog][Keep a Changelog] and this project adh
 ### Changed
   - Changed `test` script to start `test.s` file via *nodemon*.
 ---
-## [0.0.1] - 15-06-2021
+## [0.0.1] - 15-06-2021 ⏤ First update
 
 ### Added
   - Added `changelog.md`.

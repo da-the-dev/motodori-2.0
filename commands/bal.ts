@@ -1,6 +1,6 @@
-import { BaseCommand } from '../interfaces/BaseCommand'
-import { DBUser } from '../classes/DB'
-import embed from '../utility/embed'
+import { BaseCommand } from '../headers/interfaces'
+import { embed } from '../headers/utility'
+import { DBUser } from '../headers/classes'
 
 const sMsg = 'Баланс'
 /** @example Usage: `.bal @member?` */

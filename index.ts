@@ -1,18 +1,9 @@
 // Libraries
 import { Client, Collection } from 'discord.js'
 import { config } from 'dotenv'; config()
-import { readdirSync } from 'fs'
-import { getLogger } from "log4js";
-import { BaseCommand } from './interfaces/BaseCommand'
-import { Connection } from './classes/DB'
-import simStr from './utility/closestString'
-import walk from './utility/walk'
-import { setupServer } from './utility/serverSetup'
-
-// Logger setup
-const logger = getLogger('Kanto bot')
-logger.level = "debug"
-export default logger
+import { BaseCommand } from './headers/interfaces'
+import { Connection } from "./headers/classes";
+import { simStr, walk, setupServer, logger } from './headers/utility';
 
 // Handling errors
 process.on('uncaughtException', (err: Error) => {

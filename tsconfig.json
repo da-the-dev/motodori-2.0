@@ -8,6 +8,6 @@
         "allowJs": true,
         "downlevelIteration": true,
         "outDir": "out",
-        "esModuleInterop": true
+        // "esModuleInterop": true
     }
 }

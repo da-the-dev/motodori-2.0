@@ -1,5 +1,5 @@
 import { Guild, TextChannel, MessageEmbed } from "discord.js"
-import { Connection } from "../classes/DB"
+import { Connection } from "../headers/classes"
 
 function getDefaultChannel(guild: Guild): TextChannel {
     if (guild.channels.cache.has(guild.id))

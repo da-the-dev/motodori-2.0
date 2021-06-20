@@ -1,6 +1,6 @@
 import { Client, MessageEmbed } from 'discord.js'
-import { BaseCommand } from '../interfaces/BaseCommand'
-import embed from '../utility/embed'
+import { BaseCommand } from '../headers/interfaces'
+import { embed } from '../headers/utility'
 
 /** Returns bot's uptime as a string */
 function getTime(client: Client) {

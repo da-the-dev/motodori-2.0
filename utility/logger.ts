@@ -3,4 +3,4 @@ import { getLogger } from "log4js";
 const logger = getLogger('Kanto bot')
 logger.level = "debug"
 logger.debug
-export = logger
+export { logger }
