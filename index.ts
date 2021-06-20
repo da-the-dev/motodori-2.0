@@ -6,6 +6,8 @@ import { getLogger } from "log4js";
 import { BaseCommand } from './interfaces/BaseCommand'
 import { Connection } from './classes/DB'
 import simStr from './utility/closestString'
+import walk from './utility/walk'
+import { setupServer } from './utility/serverSetup'
 
 // Logger setup
 const logger = getLogger('Kanto bot')
@@ -44,9 +46,10 @@ process.on('SIGUSR2', exitHandler.bind(null, { exit: true, cleanup: true }));
 const prefix = '!'
 const client = new Client({ partials: ['CHANNEL', 'MESSAGE', 'REACTION'] })
 const commands: Collection<string, BaseCommand> = new Collection()
-readdirSync('./commands').filter(cn => cn.endsWith('.ts')).forEach(async cn => {
+walk('./commands').filter(cn => cn.endsWith('.ts')).forEach(async (cn: string) => {
     cn = cn.slice(0, -3)
-    const command: BaseCommand = await import(`./commands/${cn}`)
+    const command: BaseCommand = await import(`${cn}`)
+    cn = cn.split('/').pop()
     commands.set(cn, command)
 })
 client.login(process.env.TOKEN)
@@ -59,6 +62,11 @@ client.once('ready', async () => {
         new Connection().connect()
     ])
     logger.info('Bot started')
+})
+// Once the bot is added on another server
+client.on('guildCreate', async guild => {
+    logger.info(`Bot was invited to a new guild "${guild.name}"`)
+    setupServer(guild)
 })
 
 // Once the bot recieves a message
