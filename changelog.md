@@ -10,6 +10,10 @@ The format is based on [Keep a Changelog][Keep a Changelog] and this project adh
 
 ## [Latest]
 ---
+## [0.1.1] - 2021-06-20
+
+### Fixed
+  - Fixed an issue where members could transfer more currency than they have
 ## [0.1.0] - 2021-06-20
 ### Added
   - Addded `DBInterfaces.ts` with all database-related interfaces.
@@ -77,6 +81,7 @@ The format is based on [Keep a Changelog][Keep a Changelog] and this project adh
 
 <!-- Versions -->
 [Latest]: https://github.com/da-the-dev/motodori-2.0/compare/0.1.0...HEAD
+[0.1.1]: https://github.com/da-the-dev/motodori-2.0/compare/v0.1.0..v0.1.1
 [0.1.0]: https://github.com/da-the-dev/motodori-2.0/compare/v0.0.3..v0.1.0
 [0.0.3]: https://github.com/da-the-dev/motodori-2.0/compare/v0.0.2..v0.0.3
 [0.0.2]: https://github.com/da-the-dev/motodori-2.0/compare/0.0.2...0.0.1
