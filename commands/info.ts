@@ -33,7 +33,7 @@ const command: BaseCommand = {
         embed(msg, sMsg + ': помощь', `
         Пример работы команды:
         \`.info - выводит информацию о боте\`
-        `) as MessageEmbed
+        `)
     },
     description: 'Показывает информацию о боте'
 }

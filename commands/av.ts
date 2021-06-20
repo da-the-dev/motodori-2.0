@@ -19,7 +19,7 @@ const command: BaseCommand = {
         Пример работы команды:
         \`.av - выводит Ваш аватар\`
         \`.av @Kanto - выводит Ваш аватар пользователя Kanto\`
-        `) as MessageEmbed
+        `)
     },
     description: 'Показывает аватар участника'
 }
