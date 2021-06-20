@@ -10,6 +10,12 @@ The format is based on [Keep a Changelog][Keep a Changelog] and this project adh
 
 ## [Latest]
 ---
+## [0.2.1] - 2021-06-20
+
+### Changed
+  - Moved commands in separate folders for better management
+
+---
 ## [0.2.0] - 2021-06-20 ⏤ Restructuring update
 ### Added
   - Added `Connection.ts` and `DBUser.ts` which contain classes from the removed `DB.ts`.
