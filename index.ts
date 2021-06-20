@@ -3,7 +3,7 @@ import { Client, Collection } from 'discord.js'
 import { config } from 'dotenv'; config()
 import { readdirSync } from 'fs'
 import { getLogger } from "log4js";
-import { BaseCommand } from './intefaces/BaseCommand'
+import { BaseCommand } from './interfaces/BaseCommand'
 import simStr from './utility/closestString'
 
 // Logger setup
