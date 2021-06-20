@@ -20,6 +20,10 @@ const command: BaseCommand = {
             new DBUser(msg.guild.id, mMember.id).fetch()
         ])
 
+        if (users[0].data.money < amount) {
+            embed(msg, sMsg, 'У Вас недостаточно средств для перевода!', true); return
+        }
+
         users[0].data.money -= amount
         users[1].data.money += amount
 
