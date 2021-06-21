@@ -8,6 +8,7 @@
         "allowJs": true,
         "downlevelIteration": true,
         "outDir": "out",
+        "skipLibCheck": true
         // "esModuleInterop": true
     }
 }
