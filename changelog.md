@@ -10,16 +10,18 @@ The format is based on [Keep a Changelog][Keep a Changelog] and this project adh
 
 ## [Latest]
 ---
-## [0.2.1] - 2021-06-20
+## [0.2.1] - 2021-06-20 ⏤ 0.2.0 Hotfix #1
 
 ### Changed
   - Moved commands in separate folders for better management
 
 ---
 ## [0.2.0] - 2021-06-20 ⏤ Restructuring update
+
 ### Added
   - Added `Connection.ts` and `DBUser.ts` which contain classes from the removed `DB.ts`.
   - Added `/headers` which contains `classes.ts`, `interfaces.ts` and `utility.ts` which export modules from their respective folders.
+  - Added `walk` method that allows to put commands in separate folders in `index.ts`
 ### Changed
   - Disabled *esModuleInterop* in `tsconfig.json`
 ### Removed
