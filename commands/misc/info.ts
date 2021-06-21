@@ -35,6 +35,7 @@ const command: BaseCommand = {
         \`.info - выводит информацию о боте\`
         `)
     },
-    description: 'Показывает информацию о боте'
+    description: 'Показывает информацию о боте',
+    flag: 'default'
 }
 export = command

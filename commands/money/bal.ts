@@ -16,6 +16,7 @@ const command: BaseCommand = {
         \`.bal @Kanto - выводит Ваш баланс пользователя Kanto\`
         `)
     },
-    description: 'Показывает баланс участника'
+    description: 'Показывает баланс участника',
+    flag: 'economy'
 }
 export = command

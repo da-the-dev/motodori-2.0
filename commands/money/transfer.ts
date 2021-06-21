@@ -36,11 +36,11 @@ const command: BaseCommand = {
     help: (msg) => {
         embed(msg, sMsg + ': помощь', `
         Пример работы команды:
-        \`.transfer @Kanto 100 - переведет пользователю Kanto\`
-        \`.bal @Kanto - выводит Ваш баланс пользователя Kanto\`
+        \`.transfer @Kanto 100 - переведет пользователю Kanto 100 валюты\`
         `)
     },
-    description: 'Передает некоторое количество валюты другому пользователю'
+    description: 'Передает некоторое количество валюты другому пользователю',
+    flag: 'economy'
 }
 
 export = command

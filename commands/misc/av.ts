@@ -21,6 +21,7 @@ const command: BaseCommand = {
         \`.av @Kanto - выводит Ваш аватар пользователя Kanto\`
         `)
     },
-    description: 'Показывает аватар участника'
+    description: 'Показывает аватар участника',
+    flag: 'default'
 }
 export = command
