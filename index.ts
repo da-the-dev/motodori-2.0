@@ -2,8 +2,9 @@
 import { Client, Collection } from 'discord.js'
 import { config } from 'dotenv'; config()
 import { BaseCommand } from './headers/interfaces'
-import { Connection } from "./headers/classes";
+import { Connection, DBServer } from "./headers/classes";
 import { simStr, walk, setupServer, logger } from './headers/utility';
+
 
 // Handling errors
 process.on('uncaughtException', (err: Error) => {
@@ -18,17 +19,15 @@ process.on('unhandledRejection', (err: Error) => {
         logger.error(`${err.stack}`)
 })
 // And restarts
-process.on('SIGINT', () => {
+process.on('SIGINT', async () => {
     logger.mark('Bot process terminated')
-    Connection.closeAll()
+    await Connection.closeAll()
     process.exit(0)
 })
-function exitHandler(options, exitCode) {
-    if (options.cleanup) {
-        logger.mark('Bot process restarted via nodemon')
-        Connection.closeAll()
-    }
-    if (options.exit) process.exit();
+async function exitHandler(options, exitCode) {
+    logger.mark('Bot process restarted via nodemon')
+    await Connection.closeAll()
+    process.exit(0)
 }
 process.on('SIGUSR1', exitHandler.bind(null, { exit: true, cleanup: true }));
 process.on('SIGUSR2', exitHandler.bind(null, { exit: true, cleanup: true }));
@@ -36,11 +35,13 @@ process.on('SIGUSR2', exitHandler.bind(null, { exit: true, cleanup: true }));
 // Client setup
 const prefix = '!'
 const client = new Client({ partials: ['CHANNEL', 'MESSAGE', 'REACTION'] })
+require('discord-buttons')(client)
 const commands: Collection<string, BaseCommand> = new Collection()
 walk('./commands').filter(cn => cn.endsWith('.ts')).forEach(async (cn: string) => {
     cn = cn.slice(0, -3)
     const command: BaseCommand = await import(`${cn}`)
     cn = cn.split('/').pop()
+    logger.debug(`{F} ${cn}, ${command}`)
     commands.set(cn, command)
 })
 client.login(process.env.TOKEN)
@@ -57,11 +58,11 @@ client.once('ready', async () => {
 // Once the bot is added on another server
 client.on('guildCreate', async guild => {
     logger.info(`Bot was invited to a new guild "${guild.name}"`)
-    setupServer(guild)
+    await setupServer(guild)
 })
 
 // Once the bot recieves a message
-client.on('message', msg => {
+client.on('message', async msg => {
     if (msg.author.id === '315339158912761856' && msg.content.startsWith(prefix) && !msg.author.bot) {
         const args = msg.content.slice(1).split(' ').map(e => e.trim())
         const command = args.shift()
@@ -69,11 +70,20 @@ client.on('message', msg => {
         // Try to execute a command and suggest closest one if none found
         try {
             const execCommand = commands.get(command)
-            if (args[0] === 'help')
-                execCommand.help(msg)
+
+            const flags = (await new DBServer(msg.guild.id).fetch()).data.flags
+            logger.debug(flags, execCommand.flag, flags.includes(execCommand.flag))
+
+            // If the server has the flag need for the command execution
+            if (flags.includes(execCommand.flag) || command === 'resetPerms')
+                if (args[0] === 'help')
+                    execCommand.help(msg)
+                else
+                    await execCommand.foo(msg, args, client)
             else
-                execCommand.foo(msg, args, client)
+                msg.reply('На этом сервере недоступна эта команда!')
         } catch (err) {
+            logger.debug(err)
             if (err instanceof TypeError) {
                 let closeCommand: string
                 let max = 0

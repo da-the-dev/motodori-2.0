@@ -1,5 +1,6 @@
 import { Guild, TextChannel, MessageEmbed } from "discord.js"
 import { Connection } from "../headers/classes"
+import { Server } from '../headers/interfaces'
 
 function getDefaultChannel(guild: Guild): TextChannel {
     if (guild.channels.cache.has(guild.id))
@@ -18,5 +19,8 @@ export async function setupServer(guild: Guild) {
     const firstChannel = guild.channels.cache.get(getDefaultChannel(guild).id) as TextChannel
     firstChannel.send(new MessageEmbed()
         .setTitle('Спасибо что добавили бота Kantō!'))
-    await Connection.getConnection().set(guild.id, 'serverSettings', {})
+    await Connection.getConnection().set(guild.id, 'serverSettings', {
+        id: guild.id,
+        flags: ['default']
+    } as Server)
 }

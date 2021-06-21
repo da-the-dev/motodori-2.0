@@ -1,0 +1,46 @@
+import { Server, Settings } from '../headers/interfaces'
+import { Connection } from './Connection'
+
+export class DBServer {
+    private connection: Connection
+    public data: Server = {}
+    private guildID: string
+    private id: string
+
+    constructor(guildID) {
+        this.connection = Connection.getConnection()
+        this.guildID = guildID
+    }
+
+    /** Fetch servers's data from DB */
+    async fetch() {
+        const serverData = await this.connection.get(this.guildID, 'serverSettings')
+
+        this.data.id = this.id
+        this.data.flags = serverData.flags || []
+        this.data.def = serverData.def
+        this.data.roles = serverData.roles || []
+        this.data.customRoles = serverData.customRoles || []
+        this.data.personalRooms = serverData.personalRooms || []
+        this.data.settings = serverData.settings || {} as Settings
+        return this
+    }
+
+    /** Get the optimized version of the servers's data */
+    get() {
+        var serverData: any = {}
+
+        this.data.flags && this.data.flags.length > 0 ? serverData.flags = this.data.flags : null
+        this.data.def ? serverData.def = this.data.def : null
+        this.data.roles && this.data.roles.length > 0 ? serverData.roles = this.data.roles : null
+        this.data.customRoles && this.data.customRoles.length > 0 ? serverData.customRoles = this.data.customRoles : null
+        this.data.personalRooms && this.data.personalRooms.length > 0 ? serverData.personalRooms = this.data.personalRooms : null
+        this.data.settings ? serverData.settings = this.data.settings : null
+
+        return serverData
+    }
+
+    async save() {
+        await this.connection.set(this.guildID, 'serverSettings', this.get())
+    }
+}

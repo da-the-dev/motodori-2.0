@@ -1,3 +1,14 @@
+import { Settings } from './Settings'
+export declare interface Server {
+    id?: string,
+    flags?: string[],
+    def?: boolean,
+    roles?: string[],
+    customRoles?: CustomRole[],
+    personalRooms?: PersonalRoom[],
+    settings?: Settings
+}
+
 /** User data interface */
 export declare interface User {
     id?: string,
@@ -36,6 +47,16 @@ export declare interface LoveRoom {
     partner: string,
     creationDate: number
     bal: number
+}
+
+/** Personal room room data interface */
+export declare interface PersonalRoom {
+    id: string,
+    name: string,
+    creator: string,
+    creationTimestamp: number,
+    approver: string,
+    activity: number
 }
 
 /** Custom role data inteface */
