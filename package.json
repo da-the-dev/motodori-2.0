@@ -12,6 +12,7 @@
   "dependencies": {
     "@types/mongodb": "^3.6.18",
     "canvas": "^2.8.0",
+    "discord-buttons": "github:Unluckymichell/discord-buttons",
     "discord.js": "^12.5.3",
     "dotenv": "^10.0.0",
     "log4js": "^6.3.0",
