@@ -84,6 +84,7 @@ const adminSetup: Page = {
     buttons: [],
     action: async menu => {
         await saveRoleToSettings(menu, 'admin')
+        await menu.sendPage('roleSetupSuccess')
     },
     prev: rolesSetup
 }
@@ -97,6 +98,7 @@ const moderatorSetup: Page = {
     buttons: [],
     action: async menu => {
         await saveRoleToSettings(menu, 'moderator')
+        await menu.sendPage('roleSetupSuccess')
     },
     prev: rolesSetup
 }
@@ -110,6 +112,7 @@ const chatModSetup: Page = {
     buttons: [],
     action: async menu => {
         await saveRoleToSettings(menu, 'chatMod')
+        await menu.sendPage('roleSetupSuccess')
     },
     prev: rolesSetup
 }
@@ -123,10 +126,23 @@ const voiceModSetup: Page = {
     buttons: [],
     action: async menu => {
         await saveRoleToSettings(menu, 'voiceMod')
+        await menu.sendPage('roleSetupSuccess')
     },
     prev: rolesSetup
 }
-
+const roleSetupSuccess: Page = {
+    name: 'roleSetupSuccess',
+    embed: new MessageEmbed({
+        "title": "Успешно",
+        "description": "Роль успешно установлена!",
+        "color": 3092790
+    }),
+    buttons: [],
+    action: menu => {
+        menu.delete(5000)
+    },
+    prev: rolesSetup
+}
 
 const sMsg = 'Настройки сервера'
 /** @example Usage: `.settings` */
@@ -138,6 +154,7 @@ const command: BaseCommand = {
             .setPage(moderatorSetup)
             .setPage(chatModSetup)
             .setPage(voiceModSetup)
+            .setPage(roleSetupSuccess)
             .send()
     },
     help: (msg) => {
@@ -156,15 +173,14 @@ async function saveRoleToSettings(menu: Menu, name: string) {
         const filter = (messsage: Message) => messsage.author.id === menu.clicker.id;
         const role = (await menu.channel.awaitMessages(filter, { time: 60000, max: 1 })).first().mentions.roles.first();
         const server = await new DBServer(menu.channel.guild.id).fetch();
-        put(server.data.settings, `roles.${name}`, role.id);
-        logger.debug(server.data);
-        await server.save();
+        server.data.settings.roles[name] = role.id
+        await server.save()
+        return
     } catch (error) {
-        if (error instanceof TypeError)
-            await menu.delete();
-
+        if (error instanceof TypeError && this.currentMessage.deletable)
+            await menu.delete()
         else
-            throw error;
+            throw error
     }
 }
 
