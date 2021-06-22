@@ -70,7 +70,7 @@ client.on('message', async msg => {
         // Try to execute a command and suggest closest one if none found
         try {
             const execCommand = commands.get(command)
-
+            if (!execCommand) throw new Error('No command found')
             const flags = (await new DBServer(msg.guild.id).fetch()).data.flags
             logger.debug(flags, execCommand.flag, flags.includes(execCommand.flag))
 
@@ -83,8 +83,7 @@ client.on('message', async msg => {
             else
                 msg.reply('На этом сервере недоступна эта команда!')
         } catch (err) {
-            logger.debug(err)
-            if (err instanceof TypeError) {
+            if (err.message === 'No command found') {
                 let closeCommand: string
                 let max = 0
                 for (let cn of commands.keys())
