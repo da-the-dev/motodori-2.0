@@ -4,17 +4,19 @@
   "description": "New and better version of Kanto for motodori",
   "main": "out/index.js",
   "scripts": {
-    "test": "nodemon test.js",
+    "test": "nodemon out/test.js --delay 1",
     "start": "nodemon . --delay 3"
   },
   "author": "da_the_dev",
   "license": "GPL-3.0-or-later",
   "dependencies": {
+    "@types/lodash": "^4.14.170",
     "@types/mongodb": "^3.6.18",
     "canvas": "^2.8.0",
     "discord-buttons": "github:Unluckymichell/discord-buttons",
     "discord.js": "^12.5.3",
     "dotenv": "^10.0.0",
+    "lodash": "^4.17.21",
     "log4js": "^6.3.0",
     "mongodb": "^3.6.9"
   },
