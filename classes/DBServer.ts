@@ -1,5 +1,15 @@
 import { Server, Settings } from '../headers/interfaces'
 import { Connection } from './Connection'
+import { mergeWith } from 'lodash'
+
+const nullSettings: Settings = {
+    roles: {
+        admin: null,
+        moderator: null,
+        chatMod: null,
+        voiceMod: null,
+    }
+}
 
 export class DBServer {
     private connection: Connection
@@ -22,7 +32,10 @@ export class DBServer {
         this.data.roles = serverData.roles || []
         this.data.customRoles = serverData.customRoles || []
         this.data.personalRooms = serverData.personalRooms || []
-        this.data.settings = serverData.settings || {} as Settings
+        this.data.settings = mergeWith(serverData.settings, nullSettings, (objValue, srcValue) => {
+            if (srcValue === null) return objValue
+        })
+
         return this
     }
 
@@ -35,7 +48,7 @@ export class DBServer {
         this.data.roles && this.data.roles.length > 0 ? serverData.roles = this.data.roles : null
         this.data.customRoles && this.data.customRoles.length > 0 ? serverData.customRoles = this.data.customRoles : null
         this.data.personalRooms && this.data.personalRooms.length > 0 ? serverData.personalRooms = this.data.personalRooms : null
-        this.data.settings ? serverData.settings = this.data.settings : null
+        this.data.settings ? serverData.settings = removeNullFields(this.data.settings) : null
 
         return serverData
     }
@@ -43,4 +56,12 @@ export class DBServer {
     async save() {
         await this.connection.set(this.guildID, 'serverSettings', this.get())
     }
+}
+
+function removeNullFields(obj: any) {
+    return Object.fromEntries(
+        Object.entries(obj)
+            .filter(([_, v]) => v != null)
+            .map(([k, v]) => [k, v === Object(v) ? removeNullFields(v) : v])
+    );
 }
