@@ -1,6 +1,6 @@
 import { BaseCommand } from '../../headers/interfaces'
-import { Menu, Button, Page } from "../../headers/classes";
-import { embed } from '../../headers/utility'
+import { Menu, Button, Page, DBServer } from "../../headers/classes";
+import { embed, logger, put } from '../../headers/utility'
 import { MessageButton } from 'discord-buttons'
 import { Message, MessageEmbed, TextChannel } from 'discord.js';
 
@@ -83,16 +83,7 @@ const adminSetup: Page = {
     }),
     buttons: [],
     action: async menu => {
-        try {
-            const filter = (messsage: Message) => messsage.author.id === menu.clicker.id
-            const role = (await menu.channel.awaitMessages(filter, { time: 10000, max: 1 })).first().mentions.roles.first()
-            menu.channel.send(role.id)
-        } catch (error) {
-            if (error instanceof TypeError)
-                await menu.delete()
-            else
-                throw error
-        }
+        await saveRoleToSettings(menu, 'admin')
     },
     prev: rolesSetup
 }
@@ -105,16 +96,7 @@ const moderatorSetup: Page = {
     }),
     buttons: [],
     action: async menu => {
-        try {
-            const filter = (messsage: Message) => messsage.author.id === menu.clicker.id
-            const role = (await menu.channel.awaitMessages(filter, { time: 10000, max: 1 })).first().mentions.roles.first()
-            menu.channel.send(role.id)
-        } catch (error) {
-            if (error instanceof TypeError)
-                await menu.delete()
-            else
-                throw error
-        }
+        await saveRoleToSettings(menu, 'moderator')
     },
     prev: rolesSetup
 }
@@ -127,16 +109,7 @@ const chatModSetup: Page = {
     }),
     buttons: [],
     action: async menu => {
-        try {
-            const filter = (messsage: Message) => messsage.author.id === menu.clicker.id
-            const role = (await menu.channel.awaitMessages(filter, { time: 10000, max: 1 })).first().mentions.roles.first()
-            menu.channel.send(role.id)
-        } catch (error) {
-            if (error instanceof TypeError)
-                await menu.delete()
-            else
-                throw error
-        }
+        await saveRoleToSettings(menu, 'chatMod')
     },
     prev: rolesSetup
 }
@@ -149,20 +122,10 @@ const voiceModSetup: Page = {
     }),
     buttons: [],
     action: async menu => {
-        try {
-            const filter = (messsage: Message) => messsage.author.id === menu.clicker.id
-            const role = (await menu.channel.awaitMessages(filter, { time: 10000, max: 1 })).first().mentions.roles.first()
-            menu.channel.send(role.id)
-        } catch (error) {
-            if (error instanceof TypeError)
-                await menu.delete()
-            else
-                throw error
-        }
+        await saveRoleToSettings(menu, 'voiceMod')
     },
     prev: rolesSetup
 }
-
 
 
 const sMsg = 'Настройки сервера'
@@ -187,3 +150,21 @@ const command: BaseCommand = {
     flag: 'default'
 }
 export = command
+
+async function saveRoleToSettings(menu: Menu, name: string) {
+    try {
+        const filter = (messsage: Message) => messsage.author.id === menu.clicker.id;
+        const role = (await menu.channel.awaitMessages(filter, { time: 60000, max: 1 })).first().mentions.roles.first();
+        const server = await new DBServer(menu.channel.guild.id).fetch();
+        put(server.data.settings, `roles.${name}`, role.id);
+        logger.debug(server.data);
+        await server.save();
+    } catch (error) {
+        if (error instanceof TypeError)
+            await menu.delete();
+
+        else
+            throw error;
+    }
+}
+
