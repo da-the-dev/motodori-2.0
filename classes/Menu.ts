@@ -1,5 +1,6 @@
 import { MessageButton, ExtendedMessage, ExtendedMessageOptions, MessageComponent } from 'discord-buttons'
 import { MessageEmbed, TextChannel, DMChannel, NewsChannel, User } from 'discord.js';
+import { logger } from '../utility/logger';
 import Button from './Button';
 import Page from './Page';
 
@@ -20,6 +21,10 @@ export class Menu {
         // if (firstPage.name != 'main') throw new SyntaxError('First page\'s name must be "main"')
         if (firstPage.buttons.length <= 0) throw new SyntaxError('First page must have buttons')
 
+        firstPage.buttons.forEach(b => {
+            b.button.custom_id = `${channel.guild.id}-${firstPage.name}-${b.button.custom_id}`
+        })
+
         this.pages.push(firstPage)
         this.clicker = clicker
         this.channel = channel
@@ -29,6 +34,14 @@ export class Menu {
         if (!page.prev) throw new ReferenceError('No previous page defined in a secondary page')
         if (this.pages.find(p => p.name == page.name)) throw new SyntaxError('This page already exists')
         if (page.action && page.buttons.length > 0) throw new SyntaxError('Cannot use action and buttons in one page')
+
+        const buttonNamesTotal = this.pages.map(p => p.buttons.map(b => b.button.custom_id)).flat()
+        if ((new Set(buttonNamesTotal)).size !== buttonNamesTotal.length)
+            throw new SyntaxError('Repeating button ID between pages')
+
+        const buttonNamesLocal = page.buttons.map(b => b.button.custom_id).flat()
+        if ((new Set(buttonNamesLocal)).size !== buttonNamesLocal.length)
+            throw new SyntaxError(`Repeating button ID localy in a page "${page.name}"`)
 
         if (!page.action)
             page.buttons.push(new Button()
@@ -52,6 +65,7 @@ export class Menu {
         })
 
         this.pages.push(page)
+
         return this
     }
 
