@@ -5,8 +5,9 @@ import { Menu, Button, Page } from '../../classes/Menu'
 import { MessageButtonStyles, ExtendedMessage, MessageButton, ExtendedTextChannel } from 'discord-buttons'
 import { Message, MessageEmbed } from 'discord.js';
 
-const defaultButton = new MessageButton()
-    .setStyle(2)
+const defaultButton = {
+    style: 'gray'
+}
 
 // *Pages*
 const settingsMenu: Page = {
@@ -39,8 +40,7 @@ const rolesSetup: Page = {
     }),
     buttons: [
         {
-            button: new MessageButton()
-                .setStyle(2)
+            button: new MessageButton(defaultButton)
                 .setLabel('Администрация')
                 .setID('rolesSetup-admin'),
             action: async (menu, page, button) => {
@@ -60,9 +60,35 @@ const rolesSetup: Page = {
                         throw error
                 }
             }
+        } as Button,
+        {
+            button: new MessageButton(defaultButton)
+
+                .setLabel('Чат стафф')
+                .setID('rolesSetup-chatModer'),
+            action: async (menu, page, button) => {
+                const m = await menu.sendEmbed(new MessageEmbed({
+                    "title": "Настройки сервера: настройка ролей: чат стафф",
+                    "description": "Теперь упомяните роль и отправьте сообщение",
+                    "color": 3092790
+                }))
+                const filter = (messsage: Message) => messsage.author.id === button.clicker.user.id
+                try {
+                    const role = (await m.channel.awaitMessages(filter, { time: 10000, max: 1 })).first().mentions.roles.first()
+                    button.message.channel.send(role.id)
+                } catch (error) {
+                    if (error instanceof TypeError)
+                        await menu.delete()
+                    else
+                        throw error
+                }
+            }
         } as Button
     ]
 }
+
+
+
 
 const sMsg = 'Настройки сервера'
 /** @example Usage: `.settings` */
