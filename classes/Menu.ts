@@ -1,24 +1,13 @@
 import { MessageButton, ExtendedMessage, ExtendedMessageOptions, MessageComponent, ButtonCollector, ExtendedWebhookClient } from 'discord-buttons'
-import { Message, MessageEmbed, TextChannel, DMChannel, NewsChannel, User } from 'discord.js';
-import { logger } from '../headers/utility'
+import { MessageEmbed, TextChannel, DMChannel, NewsChannel, User } from 'discord.js';
+import Button from './Button';
+import Page from './Page';
 
 class TimeoutError extends Error {
     constructor(message?, name?) {
         super(message)
         name ? this.name = name : null
     }
-}
-
-export interface Button {
-    button: MessageButton,
-    action: (menu: Menu, currentPage: Page, button: MessageComponent) => void
-}
-
-export interface Page {
-    name: string,
-    embed: MessageEmbed,
-    buttons: Button[],
-    prev?: Page
 }
 
 export class Menu {
@@ -28,34 +17,36 @@ export class Menu {
     private channel: TextChannel | NewsChannel | DMChannel
 
     constructor(firstPage: Page, clicker: User, channel: TextChannel | NewsChannel | DMChannel) {
-        firstPage.name = 'main'
+        if (firstPage.name != 'main')
+            throw { message: 'Incorrect name of the first page', name: 'FIRST_PAGE_NOT_MAIN' }
+
         this.pages.push(firstPage)
         this.clicker = clicker
         this.channel = channel
     }
 
     setPage(page: Page) {
-        if (page.prev) {
-            page.buttons.push({
-                'button': new MessageButton()
+        if (page.prev)
+            page.buttons.push(new Button()
+                .setButton(new MessageButton()
                     .setStyle(2)
                     .setLabel('Назад')
-                    .setID(`${page.name}-back`),
-                action: async (menu, page, button) => {
+                    .setID(`${page.name}-back`))
+                .setAction(async menu => {
                     await menu.sendPage(page.prev.name)
-                }
-            })
-        } else {
-            page.buttons.push({
-                'button': new MessageButton()
+                })
+            )
+        else
+            page.buttons.push(new Button()
+                .setButton(new MessageButton()
                     .setStyle(2)
                     .setLabel('Назад')
-                    .setID(`${page.name}-back`),
-                action: async (menu, page, button) => {
+                    .setID(`${page.name}-back`))
+                .setAction(async menu => {
                     await menu.sendPage('main')
-                }
-            })
-        }
+                })
+            )
+
         this.pages.push(page)
         return this
     }
@@ -69,7 +60,6 @@ export class Menu {
 
     async sendPage(name: string) {
         const page = this.pages.find(p => p.name == name)
-        logger.debug(page.name)
         this.currentMessage = await this.currentMessage.edit({ embed: page.embed, buttons: page.buttons.map(b => b.button) } as ExtendedMessageOptions) as ExtendedMessage
 
         this.addListener(page)
@@ -97,7 +87,7 @@ export class Menu {
                 const button = collected.first();
                 button ? button.defer() : (() => { throw new TimeoutError() })()
 
-                page.buttons.find(b => b.button.custom_id == button.id).action(this, page, button)
+                page.buttons.find(b => b.button.custom_id == button.id).action(this, button, page)
             } catch (error) {
                 if (error instanceof TimeoutError)
                     this.currentMessage.delete()

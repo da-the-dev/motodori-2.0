@@ -1,7 +1,6 @@
 import { BaseCommand } from '../../headers/interfaces'
-import { DBServer } from "../../headers/classes";
+import { DBServer, Menu, Button, Page } from "../../headers/classes";
 import { embed, logger, put } from '../../headers/utility'
-import { Menu, Button, Page } from '../../classes/Menu'
 import { MessageButtonStyles, ExtendedMessage, MessageButton, ExtendedTextChannel } from 'discord-buttons'
 import { Message, MessageEmbed } from 'discord.js';
 
@@ -19,15 +18,14 @@ const settingsMenu: Page = {
             "color": 3092790
         }),
     buttons: [
-        {
-            button: new MessageButton()
-                .setStyle(2)
+        new Button()
+            .setButton(new MessageButton(defaultButton)
                 .setLabel('Настройка ролей')
-                .setID('rolesSetup'),
-            action: (menu, page, button) => {
+                .setID('settings-rolesSetup')
+            )
+            .setAction(menu => {
                 menu.sendPage('rolesSetup')
-            }
-        } as Button
+            })
     ]
 }
 
@@ -39,11 +37,12 @@ const rolesSetup: Page = {
         "color": 3092790
     }),
     buttons: [
-        {
-            button: new MessageButton(defaultButton)
+        new Button()
+            .setButton(new MessageButton(defaultButton)
                 .setLabel('Администрация')
-                .setID('rolesSetup-admin'),
-            action: async (menu, page, button) => {
+                .setID('settings-rolesSetup-admin')
+            )
+            .setAction(async (menu, button) => {
                 const m = await menu.sendEmbed(new MessageEmbed({
                     "title": "Настройки сервера: настройка ролей: администрация",
                     "description": "Теперь упомяните роль и отправьте сообщение",
@@ -59,14 +58,13 @@ const rolesSetup: Page = {
                     else
                         throw error
                 }
-            }
-        } as Button,
-        {
-            button: new MessageButton(defaultButton)
-
+            }),
+        new Button()
+            .setButton(new MessageButton(defaultButton)
                 .setLabel('Чат стафф')
-                .setID('rolesSetup-chatModer'),
-            action: async (menu, page, button) => {
+                .setID('settings-rolesSetup-chatModer')
+            )
+            .setAction(async (menu, button) => {
                 const m = await menu.sendEmbed(new MessageEmbed({
                     "title": "Настройки сервера: настройка ролей: чат стафф",
                     "description": "Теперь упомяните роль и отправьте сообщение",
@@ -82,8 +80,7 @@ const rolesSetup: Page = {
                     else
                         throw error
                 }
-            }
-        } as Button
+            })
     ]
 }
 
@@ -94,11 +91,9 @@ const sMsg = 'Настройки сервера'
 /** @example Usage: `.settings` */
 const command: BaseCommand = {
     foo: async (msg, args, client) => {
-        const menu = await new Menu(settingsMenu, msg.author, msg.channel)
+        await new Menu(settingsMenu, msg.author, msg.channel)
             .setPage(rolesSetup)
             .send()
-
-
     },
     help: (msg) => {
         embed(msg, sMsg + ': помощь', `
