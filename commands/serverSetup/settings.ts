@@ -1,7 +1,7 @@
 import { BaseCommand } from '../../headers/interfaces'
-import { DBServer, Menu, Button, Page } from "../../headers/classes";
-import { embed, logger, put } from '../../headers/utility'
-import { MessageButtonStyles, ExtendedMessage, MessageButton, ExtendedTextChannel } from 'discord-buttons'
+import { Menu, Button, Page } from "../../headers/classes";
+import { embed } from '../../headers/utility'
+import { MessageButton } from 'discord-buttons'
 import { Message, MessageEmbed, TextChannel } from 'discord.js';
 
 const defaultButton = {
@@ -180,11 +180,10 @@ const command: BaseCommand = {
     help: (msg) => {
         embed(msg, sMsg + ': помощь', `
         Пример работы команды:
-        \`.give @Kanto 100 - выдаст пользователю Kanto 100 валюты\`
-        \`.give @Kanto -100 - заберет у пользователя Kanto 100 валюты\`
+        \`.settings - открывает настройки сервера\`
         `)
     },
-    description: 'Выдает участнику валюту',
-    flag: 'economy'
+    description: 'Открывает настройки сервера',
+    flag: 'default'
 }
 export = command
