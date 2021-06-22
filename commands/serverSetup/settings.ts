@@ -2,7 +2,7 @@ import { BaseCommand } from '../../headers/interfaces'
 import { DBServer, Menu, Button, Page } from "../../headers/classes";
 import { embed, logger, put } from '../../headers/utility'
 import { MessageButtonStyles, ExtendedMessage, MessageButton, ExtendedTextChannel } from 'discord-buttons'
-import { Message, MessageEmbed } from 'discord.js';
+import { Message, MessageEmbed, TextChannel } from 'discord.js';
 
 const defaultButton = {
     style: 'gray'
@@ -10,7 +10,7 @@ const defaultButton = {
 
 // *Pages*
 const settingsMenu: Page = {
-    name: 'main',
+    name: 'settings',
     embed: new MessageEmbed(
         {
             "title": "Настройки сервера",
@@ -21,10 +21,10 @@ const settingsMenu: Page = {
         new Button()
             .setButton(new MessageButton(defaultButton)
                 .setLabel('Настройка ролей')
-                .setID('settings-rolesSetup')
+                .setID('rolesSetup')
             )
-            .setAction(menu => {
-                menu.sendPage('rolesSetup')
+            .setAction(async menu => {
+                await menu.sendPage('rolesSetup')
             })
     ]
 }
@@ -32,7 +32,7 @@ const settingsMenu: Page = {
 const rolesSetup: Page = {
     name: 'rolesSetup',
     embed: new MessageEmbed({
-        "title": "Настройки сервера: настройка ролей",
+        "title": "Настройка ролей",
         "description": "Для перехода к настройкам ролей, выберете одну из ролей ниже",
         "color": 3092790
     }),
@@ -40,29 +40,15 @@ const rolesSetup: Page = {
         new Button()
             .setButton(new MessageButton(defaultButton)
                 .setLabel('Администрация')
-                .setID('settings-rolesSetup-admin')
+                .setID('admin')
             )
             .setAction(async (menu, button) => {
-                const m = await menu.sendEmbed(new MessageEmbed({
-                    "title": "Настройки сервера: настройка ролей: администрация",
-                    "description": "Теперь упомяните роль и отправьте сообщение",
-                    "color": 3092790
-                }))
-                const filter = (messsage: Message) => messsage.author.id === button.clicker.user.id
-                try {
-                    const role = (await m.channel.awaitMessages(filter, { time: 10000, max: 1 })).first().mentions.roles.first()
-                    button.message.channel.send(role.id)
-                } catch (error) {
-                    if (error instanceof TypeError)
-                        await menu.delete()
-                    else
-                        throw error
-                }
+                await menu.sendPage('adminSetup')
             }),
         new Button()
             .setButton(new MessageButton(defaultButton)
-                .setLabel('Чат стафф')
-                .setID('settings-rolesSetup-chatModer')
+                .setLabel('Чат модерация')
+                .setID('chatMod')
             )
             .setAction(async (menu, button) => {
                 const m = await menu.sendEmbed(new MessageEmbed({
@@ -81,18 +67,65 @@ const rolesSetup: Page = {
                         throw error
                 }
             })
-    ]
+    ],
+    prev: settingsMenu
 }
 
+const adminSetup: Page = {
+    name: 'adminSetup',
+    embed: new MessageEmbed({
+        "title": "Администрация",
+        "description": "Теперь упомяните роль и отправьте сообщение",
+        "color": 3092790
+    }),
+    buttons: [],
+    action: async menu => {
+        try {
+            const filter = (messsage: Message) => messsage.author.id === menu.clicker.id
+            const role = (await menu.channel.awaitMessages(filter, { time: 10000, max: 1 })).first().mentions.roles.first()
+            menu.channel.send(role.id)
+        } catch (error) {
+            if (error instanceof TypeError)
+                await menu.delete()
+            else
+                throw error
+        }
+    },
+    prev: rolesSetup
+}
 
+const chatModSetup: Page = {
+    name: 'chatModSetup',
+    embed: new MessageEmbed({
+        "title": "Чат модерация",
+        "description": "Теперь упомяните роль и отправьте сообщение",
+        "color": 3092790
+    }),
+    buttons: [],
+    action: async menu => {
+        try {
+            const filter = (messsage: Message) => messsage.author.id === menu.clicker.id
+            const role = (await menu.channel.awaitMessages(filter, { time: 10000, max: 1 })).first().mentions.roles.first()
+            menu.channel.send(role.id)
+        } catch (error) {
+            if (error instanceof TypeError)
+                await menu.delete()
+            else
+                throw error
+        }
+    },
+    prev: rolesSetup
+}
 
 
 const sMsg = 'Настройки сервера'
 /** @example Usage: `.settings` */
 const command: BaseCommand = {
     foo: async (msg, args, client) => {
-        await new Menu(settingsMenu, msg.author, msg.channel)
+        await new Menu(settingsMenu, msg.author, msg.channel as TextChannel)
             .setPage(rolesSetup)
+            .setPage(adminSetup)
+            .setPage(chatModSetup)
             .send()
     },
     help: (msg) => {

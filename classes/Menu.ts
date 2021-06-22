@@ -1,6 +1,5 @@
-import { MessageButton, ExtendedMessage, ExtendedMessageOptions, MessageComponent, ButtonCollector, ExtendedWebhookClient } from 'discord-buttons'
+import { MessageButton, ExtendedMessage, ExtendedMessageOptions, MessageComponent } from 'discord-buttons'
 import { MessageEmbed, TextChannel, DMChannel, NewsChannel, User } from 'discord.js';
-import { logger } from '../utility/logger';
 import Button from './Button';
 import Page from './Page';
 
@@ -14,12 +13,12 @@ class TimeoutError extends Error {
 export class Menu {
     private pages: Page[] = []
     private currentMessage: ExtendedMessage
-    private clicker: User
-    private channel: TextChannel
+    public clicker: User
+    public channel: TextChannel
 
     constructor(firstPage: Page, clicker: User, channel: TextChannel) {
-        if (firstPage.name != 'main')
-            throw { message: 'Incorrect name of the first page', name: 'FIRST_PAGE_NOT_MAIN' }
+        // if (firstPage.name != 'main') throw new SyntaxError('First page\'s name must be "main"')
+        if (firstPage.buttons.length <= 0) throw new SyntaxError('First page must have buttons')
 
         this.pages.push(firstPage)
         this.clicker = clicker
@@ -27,7 +26,11 @@ export class Menu {
     }
 
     setPage(page: Page) {
-        if (page.prev) {
+        if (!page.prev) throw new ReferenceError('No previous page defined in a secondary page')
+        if (this.pages.find(p => p.name == page.name)) throw new SyntaxError('This page already exists')
+        if (page.action && page.buttons.length > 0) throw new SyntaxError('Cannot use action and buttons in one page')
+
+        if (!page.action)
             page.buttons.push(new Button()
                 .setButton(new MessageButton()
                     .setStyle(2)
@@ -38,25 +41,11 @@ export class Menu {
                 })
             )
 
-            page.buttons.forEach(b => {
-                b.button.custom_id = `${page.prev.name}-${page.name}-${b.button.custom_id}`
-            })
-        }
-        else {
-            page.buttons.push(new Button()
-                .setButton(new MessageButton()
-                    .setStyle(2)
-                    .setLabel('Назад')
-                    .setID(`${page.name}-back`))
-                .setAction(async menu => {
-                    await menu.sendPage('main')
-                })
-            )
+        page.embed.setTitle(`${page.prev.embed.title}: ${page.embed.title[0].toLowerCase() + page.embed.title.slice(1)}`)
 
-            page.buttons.forEach(b => {
-                b.button.custom_id = `main-${page.name}-${b.button.custom_id}`
-            })
-        }
+        page.buttons.forEach(b => {
+            b.button.custom_id = `${page.prev.name}-${page.name}-${b.button.custom_id}`
+        })
 
         page.buttons.forEach(b => {
             b.button.custom_id = `${this.channel.guild.id}-${b.button.custom_id}`
@@ -67,32 +56,37 @@ export class Menu {
     }
 
     async send() {
-        const page = this.pages.find(p => p.name == 'main')
-        this.currentMessage = await this.channel.send({ embed: page.embed, buttons: page.buttons.map(b => b.button) } as ExtendedMessageOptions) as ExtendedMessage
+        const page = this.pages[0]
+        this.currentMessage = await this.channel.send({ embed: page.embed, buttons: page.buttons.map(b => b.button) || null } as ExtendedMessageOptions) as ExtendedMessage
         this.addListener(page)
-
-        logger.debug(this.pages.map(p => p.buttons.map(b => b.button.custom_id)))
 
         return this
     }
 
     async sendPage(name: string) {
         const page = this.pages.find(p => p.name == name)
-        this.currentMessage = await this.currentMessage.edit({ embed: page.embed, buttons: page.buttons.map(b => b.button) } as ExtendedMessageOptions) as ExtendedMessage
+        if (!page) throw new ReferenceError('No page found!')
 
+        this.currentMessage = await this.currentMessage.edit({ embed: page.embed, buttons: page.buttons.map(b => b.button).length > 0 ? page.buttons.map(b => b.button) : null } as ExtendedMessageOptions) as ExtendedMessage
+
+        page.action ? page.action(this, page) : null
         this.addListener(page)
         return this.currentMessage
     }
 
+    /**@deprecated This method should not be used */
     async clearButtons() {
         this.currentMessage = await this.currentMessage.edit({ embed: this.currentMessage.embeds[0], buttons: null } as ExtendedMessageOptions) as ExtendedMessage
         return this.currentMessage
     }
+
+    /**@deprecated This method should not be used */
     async sendEmbed(emb: MessageEmbed) {
         await this.clearButtons()
         this.currentMessage = await this.currentMessage.edit({ embed: emb }) as ExtendedMessage
         return this.currentMessage
     }
+
     async delete() {
         await this.currentMessage.delete()
     }
@@ -114,5 +108,4 @@ export class Menu {
             }
         })
     }
-
 }
