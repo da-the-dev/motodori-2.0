@@ -83,8 +83,8 @@ export class Menu {
 
         this.currentMessage = await this.currentMessage.edit({ embed: page.embed, buttons: page.buttons.map(b => b.button).length > 0 ? page.buttons.map(b => b.button) : null } as ExtendedMessageOptions) as ExtendedMessage
 
-        page.action ? page.action(this, page) : null
-        this.addListener(page)
+        if (page.action) page.action(this, page)
+        if (!page.action) this.addListener(page)
         return this.currentMessage
     }
 
@@ -101,22 +101,23 @@ export class Menu {
         return this.currentMessage
     }
 
-    async delete() {
-        await this.currentMessage.delete()
+    async delete(time?: number) {
+        if (this.currentMessage.deletable)
+            await this.currentMessage.delete({ timeout: time })
     }
 
     async addListener(page: Page) {
         const filter = (button: MessageComponent) => button.clicker.user.id === this.clicker.id
         const collector = this.currentMessage.createButtonCollector(filter, { max: 1, time: 60000 })
-        collector.on('end', collected => {
+        collector.on('end', async collected => {
             try {
                 const button = collected.first();
                 button ? button.defer() : (() => { throw new TimeoutError() })()
 
                 page.buttons.find(b => b.button.custom_id == button.id).action(this, button, page)
             } catch (error) {
-                if (error instanceof TimeoutError)
-                    this.currentMessage.delete()
+                if (error instanceof TimeoutError && this.currentMessage.deletable)
+                    await this.currentMessage.delete()
                 else
                     throw error
             }
