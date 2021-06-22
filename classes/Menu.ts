@@ -18,7 +18,7 @@ export interface Page {
     name: string,
     embed: MessageEmbed,
     buttons: Button[],
-    next?: Page
+    prev?: Page
 }
 
 export class Menu {
@@ -35,10 +35,28 @@ export class Menu {
     }
 
     setPage(page: Page) {
+        if (page.prev) {
+            page.buttons.push({
+                'button': new MessageButton()
+                    .setStyle(2)
+                    .setLabel('Назад')
+                    .setID(`${page.name}-back`),
+                action: async (menu, page, button) => {
+                    await menu.sendPage(page.prev.name)
+                }
+            })
+        } else {
+            page.buttons.push({
+                'button': new MessageButton()
+                    .setStyle(2)
+                    .setLabel('Назад')
+                    .setID(`${page.name}-back`),
+                action: async (menu, page, button) => {
+                    await menu.sendPage('main')
+                }
+            })
+        }
         this.pages.push(page)
-
-        logger.debug(this.pages.map(p => p.name))
-        logger.debug(this.pages.map(p => p.buttons[0].button.label))
         return this
     }
 
