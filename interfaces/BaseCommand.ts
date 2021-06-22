@@ -1,7 +1,9 @@
 import { Message, Client } from "discord.js"
+
+type Flags = 'default' | 'economy'
 export interface BaseCommand {
     description: string,
     foo: (msg: Message, args: string[], client: Client) => void,
     help: (msg) => void,
-    flag: string
+    flag: Flags
 }
