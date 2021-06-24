@@ -1,7 +1,7 @@
+import { ExtendedMessageOptions, MessageButton } from 'discord-buttons'
 import { BaseCommand } from '../../headers/interfaces'
-import { Menu, Button, Page, DBServer } from "../../headers/classes";
-import { embed, logger, put } from '../../headers/utility'
-import { MessageButton } from 'discord-buttons'
+import { DBServer, Menu, Button, Page } from "../../headers/classes";
+import { embed, logger } from '../../headers/utility'
 import { Message, MessageEmbed, TextChannel } from 'discord.js';
 
 const defaultButton = {
@@ -83,8 +83,8 @@ const adminSetup: Page = {
     }),
     buttons: [],
     action: async menu => {
-        await saveRoleToSettings(menu, 'admin')
-        await menu.sendPage('roleSetupSuccess')
+        if (await saveRoleToSettings(menu, 'admin'))
+            await menu.sendPage('roleSetupSuccess')
     },
     prev: rolesSetup
 }
@@ -97,8 +97,8 @@ const moderatorSetup: Page = {
     }),
     buttons: [],
     action: async menu => {
-        await saveRoleToSettings(menu, 'moderator')
-        await menu.sendPage('roleSetupSuccess')
+        if (await saveRoleToSettings(menu, 'moderator'))
+            await menu.sendPage('roleSetupSuccess')
     },
     prev: rolesSetup
 }
@@ -111,8 +111,8 @@ const chatModSetup: Page = {
     }),
     buttons: [],
     action: async menu => {
-        await saveRoleToSettings(menu, 'chatMod')
-        await menu.sendPage('roleSetupSuccess')
+        if (await saveRoleToSettings(menu, 'chatMod'))
+            await menu.sendPage('roleSetupSuccess')
     },
     prev: rolesSetup
 }
@@ -125,8 +125,8 @@ const voiceModSetup: Page = {
     }),
     buttons: [],
     action: async menu => {
-        await saveRoleToSettings(menu, 'voiceMod')
-        await menu.sendPage('roleSetupSuccess')
+        if (await saveRoleToSettings(menu, 'voiceMod'))
+            await menu.sendPage('roleSetupSuccess')
     },
     prev: rolesSetup
 }
@@ -138,9 +138,6 @@ const roleSetupSuccess: Page = {
         "color": 3092790
     }),
     buttons: [],
-    action: menu => {
-        menu.delete(5000)
-    },
     prev: rolesSetup
 }
 
@@ -148,13 +145,15 @@ const sMsg = 'Настройки сервера'
 /** @example Usage: `.settings` */
 const command: BaseCommand = {
     foo: async (msg, args, client) => {
-        await new Menu(settingsMenu, msg.author, msg.channel as TextChannel)
-            .setPage(rolesSetup)
-            .setPage(adminSetup)
-            .setPage(moderatorSetup)
-            .setPage(chatModSetup)
-            .setPage(voiceModSetup)
-            .setPage(roleSetupSuccess)
+        await new Menu([
+            settingsMenu,
+            rolesSetup,
+            adminSetup,
+            moderatorSetup,
+            chatModSetup,
+            voiceModSetup,
+            roleSetupSuccess,
+        ], msg.author, msg.channel as TextChannel)
             .send()
     },
     help: (msg) => {
@@ -169,18 +168,24 @@ const command: BaseCommand = {
 export = command
 
 async function saveRoleToSettings(menu: Menu, name: string) {
-    try {
-        const filter = (messsage: Message) => messsage.author.id === menu.clicker.id;
-        const role = (await menu.channel.awaitMessages(filter, { time: 60000, max: 1 })).first().mentions.roles.first();
-        const server = await new DBServer(menu.channel.guild.id).fetch();
-        server.data.settings.roles[name] = role.id
-        await server.save()
-        return
-    } catch (error) {
-        if (error instanceof TypeError && this.currentMessage.deletable)
-            await menu.delete()
-        else
-            throw error
+    const filter = (messsage: Message) => messsage.author.id === menu.clicker.id;
+    const role = (await menu.channel.awaitMessages(filter, { time: 60000, max: 1 })).first().mentions.roles.first()
+    if (!role) {
+        menu.currentMessage.edit({
+            embed: new MessageEmbed(
+                {
+                    "description": "Неверно указана роль! Начните настройку заново!",
+                    "color": 3092790
+                }
+            ).setTitle(menu.currentMessage.embeds[0].title)
+        })
+        menu.delete(5000)
+        return false
     }
+    const server = await new DBServer(menu.channel.guild.id).fetch();
+    server.data.settings.roles[name] = role.id
+    await server.save()
+    menu.delete(5000)
+    return true
 }
 

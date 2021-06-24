@@ -1,7 +1,6 @@
 import { MessageEmbed } from 'discord.js';
-import { MessageComponent } from 'discord-buttons'
 import Button from './Button';
-import { Menu } from './Menu';
+import Menu from './Menu';
 export default class Page {
     name: string
     embed: MessageEmbed
