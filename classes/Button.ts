@@ -12,7 +12,7 @@ export default class Button {
         this.button = button
         return this
     }
-    setAction(action: (menu: Menu, button: MessageComponent, currentPage: Page) => void) {
+    setAction(action: (menu: Menu, button?: MessageComponent, currentPage?: Page) => void) {
         this.action = action
         return this
     }
