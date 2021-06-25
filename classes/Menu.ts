@@ -1,6 +1,5 @@
 import { MessageButton, ExtendedMessage, ExtendedMessageOptions, MessageComponent } from 'discord-buttons'
 import { MessageEmbed, TextChannel, User } from 'discord.js';
-import { logger } from '../utility/logger';
 import Button from './Button';
 import Toggle from './Toggle';
 import Page from './Page';
@@ -34,7 +33,7 @@ export default class Menu {
         const pageNames = pages.map(p => p.name)
         if (new Set(pageNames).size != pageNames.length) throw new SyntaxError('Duplicate page name')
         const buttonIDs = pages.map(p => p.buttons ? p.buttons.map(b => b.button.custom_id) : []).flat().filter(bid => bid != '')
-        logger.debug(buttonIDs)
+        if (!pages.every(p => p.setup === undefined)) throw new SyntaxError('Pages "setup" value should not be set')
         if (new Set(buttonIDs).size != buttonIDs.length) throw new SyntaxError('Duplicate button ID')
 
         pages.slice(1).forEach(p => {
