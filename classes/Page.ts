@@ -1,9 +1,12 @@
 import { MessageEmbed } from 'discord.js';
+import { logger } from '../utility/logger';
 import Button from './Button';
 import Menu from './Menu';
 import OneWay from './OneWay';
 import Toggle from './Toggle';
 type AnyButton = Button | Toggle | OneWay
+
+
 export default class Page {
     name: string
     embed: MessageEmbed
@@ -12,12 +15,12 @@ export default class Page {
     action?: (menu: Menu, currentPage?: Page) => void
     setup?: boolean
 
-    constructor(name: string, embed: MessageEmbed, buttons?: Button[], prev?: Page, action?: (menu: Menu, currentPage?: Page) => void) {
-        this.name = name
-        this.embed = embed
-        this.buttons = buttons
-        this.prev = prev
-        this.action = action
+    constructor(data: Page) {
+        this.name = data.name
+        this.embed = data.embed
+        this.buttons = data.buttons
+        this.prev = data.prev
+        this.action = data.action
         this.setup = false
     }
 }
