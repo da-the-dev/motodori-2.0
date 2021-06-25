@@ -1,15 +1,6 @@
-import { Server, Settings } from '../headers/interfaces'
+import { Server, Settings, nullSettings } from '../headers/interfaces'
 import { Connection } from './Connection'
 import { mergeWith } from 'lodash'
-
-const nullSettings: Settings = {
-    roles: {
-        admin: null,
-        moderator: null,
-        chatMod: null,
-        voiceMod: null,
-    }
-}
 
 export class DBServer {
     private connection: Connection

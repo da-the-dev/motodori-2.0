@@ -10,7 +10,6 @@ class TimeoutError extends Error {
     }
 }
 
-
 function clone(obj) {
     if (obj == null || typeof (obj) != 'object')
         return obj;
@@ -33,12 +32,13 @@ export default class Menu {
         if (pages[0].buttons.length <= 0) throw new SyntaxError('First page must have buttons')
         const pageNames = pages.map(p => p.name)
         if (new Set(pageNames).size != pageNames.length) throw new SyntaxError('Duplicate page name')
-        const buttonIDs = pages.map(p => p.buttons.map(b => b.button.custom_id).flat())
+        const buttonIDs = pages.map(p => p.buttons ? p.buttons.map(b => b.button.custom_id) : []).flat().filter(bid => bid != '')
+        logger.debug(buttonIDs)
         if (new Set(buttonIDs).size != buttonIDs.length) throw new SyntaxError('Duplicate button ID')
 
         pages.slice(1).forEach(p => {
             if (!p.prev) throw new ReferenceError('No previous page defined in a secondary page')
-            if (p.action && p.buttons.length > 0) throw new SyntaxError('Cannot use action and buttons in one page')
+            if (p.action && p.buttons && p.buttons.length > 0) throw new SyntaxError('Cannot use action and buttons in one page')
         })
 
         this.channel = channel
@@ -58,8 +58,8 @@ export default class Menu {
 
         // Modifying the pages
         this.pages.slice(1).forEach(p => {
-            // Adding "Back" button to all non-action pages
-            if (!p.action)
+            // Adding "Back" button to all pages with buttons
+            if (p.buttons && p.buttons.length > 0)
                 p.buttons.push(new Button()
                     .setButton(new MessageButton()
                         .setStyle(2)
@@ -74,9 +74,10 @@ export default class Menu {
             p.embed.title = (`${p.prev.embed.title}: ${p.embed.title[0].toLowerCase() + p.embed.title.slice(1)}`)
 
             // Chaining together better button IDs
-            p.buttons.forEach(b => {
-                b.button.custom_id = `${this.channel.guild.id}-${p.prev.name}-${p.name}-${b.button.custom_id}`
-            })
+            if (p.buttons)
+                p.buttons.forEach(b => {
+                    b.button.custom_id = `${this.channel.guild.id}-${p.prev.name}-${p.name}-${b.button.custom_id}`
+                })
         })
     }
 
@@ -114,9 +115,11 @@ export default class Menu {
         return this.currentMessage
     }
 
-    /** Deletes the menu message */
+    /** Deletes the menu message 
+     * @deprecated This function causes API errors, do not use
+     */
     async delete(time?: number) {
-        if (this.currentMessage.deletable)
+        if (!this.currentMessage.deleted)
             await this.currentMessage.delete({ timeout: time })
     }
 

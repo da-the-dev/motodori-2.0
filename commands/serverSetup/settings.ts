@@ -1,4 +1,4 @@
-import { ExtendedMessageOptions, MessageButton } from 'discord-buttons'
+import { MessageButton } from 'discord-buttons'
 import { BaseCommand } from '../../headers/interfaces'
 import { DBServer, Menu, Button, Page } from "../../headers/classes";
 import { embed, logger } from '../../headers/utility'
@@ -26,6 +26,14 @@ const settingsMenu: Page = {
             )
             .setAction(async menu => {
                 await menu.sendPage('rolesSetup')
+            }),
+        new Button()
+            .setButton(new MessageButton(defaultButton)
+                .setLabel('Настройка каналов')
+                .setID('channelSetup')
+            )
+            .setAction(async menu => {
+                await menu.sendPage('channelSetup')
             })
     ]
 }
@@ -83,8 +91,7 @@ const adminSetup: Page = {
     }),
     buttons: [],
     action: async menu => {
-        if (await saveRoleToSettings(menu, 'admin'))
-            await menu.sendPage('roleSetupSuccess')
+        await saveRoleToSettings(menu, 'admin')
     },
     prev: rolesSetup
 }
@@ -97,8 +104,7 @@ const moderatorSetup: Page = {
     }),
     buttons: [],
     action: async menu => {
-        if (await saveRoleToSettings(menu, 'moderator'))
-            await menu.sendPage('roleSetupSuccess')
+        await saveRoleToSettings(menu, 'moderator')
     },
     prev: rolesSetup
 }
@@ -111,8 +117,7 @@ const chatModSetup: Page = {
     }),
     buttons: [],
     action: async menu => {
-        if (await saveRoleToSettings(menu, 'chatMod'))
-            await menu.sendPage('roleSetupSuccess')
+        await saveRoleToSettings(menu, 'chatMod')
     },
     prev: rolesSetup
 }
@@ -125,8 +130,7 @@ const voiceModSetup: Page = {
     }),
     buttons: [],
     action: async menu => {
-        if (await saveRoleToSettings(menu, 'voiceMod'))
-            await menu.sendPage('roleSetupSuccess')
+        await saveRoleToSettings(menu, 'voiceMod')
     },
     prev: rolesSetup
 }
@@ -141,18 +145,82 @@ const roleSetupSuccess: Page = {
     prev: rolesSetup
 }
 
+// Channels setup
+const channelSetup: Page = {
+    name: 'channelSetup',
+    embed: new MessageEmbed({
+        "title": "Настройка каналов",
+        "description": "Для перехода к настройкам каналов, выберете один из них из них ниже\n**Описание каналов:**\n`1.` *Основной* ⏤ основной текстовый канал сервера\n`2.` *Флуд* ⏤ канал, в котором будут писаться команды\n`3.` *Настройка приватных комнат* ⏤ настройка приватных комнат\n",
+        "color": 3092790
+    }),
+    buttons: [
+        new Button()
+            .setButton(new MessageButton(defaultButton)
+                .setLabel('Основной')
+                .setID('general')
+            )
+            .setAction(async (menu, button) => {
+                await menu.sendPage('generalSetup')
+            }),
+        new Button()
+            .setButton(new MessageButton(defaultButton)
+                .setLabel('Флуд')
+                .setID('flood')
+            )
+            .setAction(async (menu, button) => {
+                await menu.sendPage('moderatorSetup')
+            }),
+        new Button()
+            .setButton(new MessageButton(defaultButton)
+                .setLabel('Настройка приватных комнат')
+                .setID('privateRoomsSetup')
+            )
+            .setAction(async (menu, button) => {
+                await menu.sendPage('privateRoomsSetup')
+            })
+    ],
+    prev: settingsMenu
+}
+const generalSetup: Page = {
+    name: 'generalSetup',
+    embed: new MessageEmbed({
+        "title": "Основной",
+        "description": "Теперь отправьте ID канала",
+        "color": 3092790
+    }),
+    action: async menu => {
+        await saveChannelIDToSettings(menu, 'general', 'text')
+    },
+    prev: channelSetup
+}
+const channelSetupSuccess: Page = {
+    name: 'channelSetupSuccess',
+    embed: new MessageEmbed({
+        "title": "Успешно",
+        "description": "Канал успешно установлен!",
+        "color": 3092790
+    }),
+    prev: channelSetup
+}
+
+// 
 const sMsg = 'Настройки сервера'
 /** @example Usage: `.settings` */
 const command: BaseCommand = {
     foo: async (msg, args, client) => {
         await new Menu([
             settingsMenu,
+
             rolesSetup,
             adminSetup,
             moderatorSetup,
             chatModSetup,
             voiceModSetup,
             roleSetupSuccess,
+
+            channelSetup,
+            generalSetup,
+            channelSetupSuccess
         ], msg.author, msg.channel as TextChannel)
             .send()
     },
@@ -179,13 +247,32 @@ async function saveRoleToSettings(menu: Menu, name: string) {
                 }
             ).setTitle(menu.currentMessage.embeds[0].title)
         })
-        menu.delete(5000)
-        return false
+        return
     }
     const server = await new DBServer(menu.channel.guild.id).fetch();
     server.data.settings.roles[name] = role.id
     await server.save()
-    menu.delete(5000)
-    return true
+    await menu.sendPage('roleSetupSuccess')
+    logger.debug(menu.currentMessage ? true : false)
+}
+async function saveChannelIDToSettings(menu: Menu, name: string, type: 'text' | 'category' | 'voice') {
+    const filter = (messsage: Message) => messsage.author.id === menu.clicker.id;
+    const id = (await menu.channel.awaitMessages(filter, { time: 60000, max: 1 })).first().content
+    const channel = menu.channel.guild.channels.cache.get(id)
+    if (!id || !channel || channel.type != type) {
+        menu.currentMessage.edit({
+            embed: new MessageEmbed(
+                {
+                    "description": "Неверно указан ID! Начните настройку заново!",
+                    "color": 3092790
+                }
+            ).setTitle(menu.currentMessage.embeds[0].title)
+        })
+        return
+    }
+    const server = await new DBServer(menu.channel.guild.id).fetch();
+    server.data.settings.channels[name] = id
+    await server.save()
+    await menu.sendPage('channelSetupSuccess')
 }
 
