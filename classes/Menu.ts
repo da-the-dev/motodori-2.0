@@ -22,7 +22,7 @@ function clone(obj) {
 }
 
 export default class Menu {
-    private pages: Page[] = []
+    public pages: Page[] = []
     public currentMessage: ExtendedMessage
     public clicker: User
     public channel: TextChannel
@@ -44,40 +44,46 @@ export default class Menu {
         this.channel = channel
         this.clicker = clicker
         // Removing the connection between original values and object's 
-        pages.forEach(p => {
-            // this.pages.push(JSON.parse(JSON.stringify(p)))
-            this.pages.push(clone(p))
-        })
-        // logger.debug(this.pages.map(p => p.buttons.map(b => b.action)).flat())
+        // pages.forEach(p => {
+        //     // this.pages.push(JSON.parse(JSON.stringify(p)))
+        //     this.pages.push(clone(p))
+        // })
+        this.pages = pages
 
         // Settings proper ID to buttons on main page
         const firstPage = this.pages[0]
-        firstPage.buttons.forEach(b => {
-            b.button.custom_id = `${channel.guild.id}-${firstPage.name}-${b.button.custom_id}`
-        })
+        if (!firstPage.setup) {
+            firstPage.buttons.forEach(b => {
+                b.button.custom_id = `${channel.guild.id}-${firstPage.name}-${b.button.custom_id}`
+            })
+            firstPage.setup = true
+        }
 
         // Modifying the pages
         this.pages.slice(1).forEach(p => {
-            // Adding "Back" button to all pages with buttons
-            if (p.buttons && p.buttons.length > 0)
-                p.buttons.push(new Button()
-                    .setButton(new MessageButton()
-                        .setStyle(2)
-                        .setLabel('Назад')
-                        .setID(`back`))
-                    .setAction(async menu => {
-                        await menu.sendPage(p.prev.name)
+            if (!p.setup) {
+                // Adding "Back" button to all pages with buttons
+                if (p.buttons && p.buttons.length > 0)
+                    p.buttons.push(new Button()
+                        .setButton(new MessageButton()
+                            .setStyle(2)
+                            .setLabel('Назад')
+                            .setID(`back`))
+                        .setAction(async menu => {
+                            await menu.sendPage(p.prev.name)
+                        })
+                    )
+
+                // Chaining together the title
+                p.embed.title = (`${p.prev.embed.title}: ${p.embed.title[0].toLowerCase() + p.embed.title.slice(1)}`)
+
+                // Chaining together better button IDs
+                if (p.buttons)
+                    p.buttons.forEach(b => {
+                        b.button.custom_id = `${this.channel.guild.id}-${p.prev.name}-${p.name}-${b.button.custom_id}`
                     })
-                )
-
-            // Chaining together the title
-            p.embed.title = (`${p.prev.embed.title}: ${p.embed.title[0].toLowerCase() + p.embed.title.slice(1)}`)
-
-            // Chaining together better button IDs
-            if (p.buttons)
-                p.buttons.forEach(b => {
-                    b.button.custom_id = `${this.channel.guild.id}-${p.prev.name}-${p.name}-${b.button.custom_id}`
-                })
+                p.setup = true
+            }
         })
     }
 
@@ -95,7 +101,7 @@ export default class Menu {
         const page = this.pages.find(p => p.name == name)
         if (!page) throw new ReferenceError('No page found!')
 
-        this.currentMessage = await this.currentMessage.edit({ embed: page.embed, buttons: page.buttons.map(b => b.button).length > 0 ? page.buttons.map(b => b.button) : null } as ExtendedMessageOptions) as ExtendedMessage
+        this.currentMessage = await this.currentMessage.edit({ embed: page.embed, buttons: page.buttons && page.buttons.map(b => b.button).length > 0 ? page.buttons.map(b => b.button) : null } as ExtendedMessageOptions) as ExtendedMessage
 
         if (page.action) page.action(this, page)
         if (!page.action) this.addListener(page)

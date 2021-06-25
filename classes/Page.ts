@@ -7,6 +7,7 @@ export default class Page {
     buttons?: Button[]
     prev?: Page
     action?: (menu: Menu, currentPage?: Page) => void
+    setup?: boolean
 
     constructor(name: string, embed: MessageEmbed, buttons?: Button[], prev?: Page, action?: (menu: Menu, currentPage?: Page) => void) {
         this.name = name
@@ -14,5 +15,6 @@ export default class Page {
         this.buttons = buttons
         this.prev = prev
         this.action = action
+        this.setup = false
     }
 }
