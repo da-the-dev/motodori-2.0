@@ -134,7 +134,8 @@ export default class Menu {
     async addListener(page: Page) {
         const filter = (button: MessageComponent) => button.clicker.user.id === this.clicker.id
         const collector = this.currentMessage.createButtonCollector(filter, { max: 1, time: 60000 });
-        (page.buttons.find(b => b instanceof Toggle) as Toggle).start(this, null, page)
+        const toggleButtons = page.buttons.filter(b => b instanceof Toggle) as Toggle[]
+        toggleButtons ? toggleButtons.forEach(b => b.start(this, null, page)) : null
         collector.on('end', async collected => {
             try {
                 const button = collected.first();
