@@ -4,14 +4,14 @@ import { DBServer, Menu, Button, Page } from "../../headers/classes";
 import { embed, logger } from '../../headers/utility'
 import { Message, MessageEmbed, TextChannel } from 'discord.js';
 import Toggle from '../../classes/Toggle';
+import OneWay from '../../classes/OneWay';
 
 const defaultButton = {
     style: 'gray'
 }
-
 // *Pages*
 // Main page
-const settingsMenu: Page = {
+const settingsMenu = new Page({
     name: 'settings',
     embed: new MessageEmbed(
         {
@@ -37,10 +37,10 @@ const settingsMenu: Page = {
                 await menu.sendPage('channelSetup')
             })
     ]
-}
+})
 
 // Roles setup
-const rolesSetup: Page = {
+const rolesSetup = new Page({
     name: 'rolesSetup',
     embed: new MessageEmbed({
         "title": "Настройка ролей",
@@ -82,8 +82,8 @@ const rolesSetup: Page = {
             })
     ],
     prev: settingsMenu
-}
-const adminSetup: Page = {
+})
+const adminSetup = new Page({
     name: 'adminSetup',
     embed: new MessageEmbed({
         "title": "Администрация",
@@ -94,8 +94,8 @@ const adminSetup: Page = {
         await saveRoleToSettings(menu, 'admin')
     },
     prev: rolesSetup
-}
-const moderatorSetup: Page = {
+})
+const moderatorSetup = new Page({
     name: 'moderatorSetup',
     embed: new MessageEmbed({
         "title": "Модераторы",
@@ -106,8 +106,8 @@ const moderatorSetup: Page = {
         await saveRoleToSettings(menu, 'moderator')
     },
     prev: rolesSetup
-}
-const chatModSetup: Page = {
+})
+const chatModSetup = new Page({
     name: 'chatModSetup',
     embed: new MessageEmbed({
         "title": "Чат модерация",
@@ -118,8 +118,8 @@ const chatModSetup: Page = {
         await saveRoleToSettings(menu, 'chatMod')
     },
     prev: rolesSetup
-}
-const voiceModSetup: Page = {
+})
+const voiceModSetup = new Page({
     name: 'voiceModSetup',
     embed: new MessageEmbed({
         "title": "Войс модерация",
@@ -130,8 +130,8 @@ const voiceModSetup: Page = {
         await saveRoleToSettings(menu, 'voiceMod')
     },
     prev: rolesSetup
-}
-const roleSetupSuccess: Page = {
+})
+const roleSetupSuccess = new Page({
     name: 'roleSetupSuccess',
     embed: new MessageEmbed({
         "title": "Успешно",
@@ -139,10 +139,10 @@ const roleSetupSuccess: Page = {
         "color": 3092790
     }),
     prev: rolesSetup
-}
+})
 
 // Channels setup
-const channelSetup: Page = {
+const channelSetup = new Page({
     name: 'channelSetup',
     embed: new MessageEmbed({
         "title": "Настройка каналов",
@@ -170,14 +170,15 @@ const channelSetup: Page = {
             .setButton(new MessageButton(defaultButton)
                 .setLabel('Настройка приватных комнат')
                 .setID('privateRoomsSetup')
+                .setDisabled(true)
             )
             .setAction(async (menu, button) => {
                 await menu.sendPage('privateRoomsSetup')
             })
     ],
     prev: settingsMenu
-}
-const generalSetup: Page = {
+})
+const generalSetup = new Page({
     name: 'generalSetup',
     embed: new MessageEmbed({
         "title": "Основной",
@@ -188,8 +189,8 @@ const generalSetup: Page = {
         await saveChannelIDToSettings(menu, 'general', 'text')
     },
     prev: channelSetup
-}
-const channelSetupSuccess: Page = {
+})
+const channelSetupSuccess = new Page({
     name: 'channelSetupSuccess',
     embed: new MessageEmbed({
         "title": "Успешно",
@@ -197,7 +198,10 @@ const channelSetupSuccess: Page = {
         "color": 3092790
     }),
     prev: channelSetup
-}
+})
+
+// Togglables setup
+// const 
 
 // Functionality toggles
 const sMsg = 'Настройки сервера'
@@ -207,18 +211,16 @@ const command: BaseCommand = {
         await new Menu([
             settingsMenu,
 
-            // rolesSetup,
-            // adminSetup,
-            // moderatorSetup,
-            // chatModSetup,
-            // voiceModSetup,
-            // roleSetupSuccess,
+            rolesSetup,
+            adminSetup,
+            moderatorSetup,
+            chatModSetup,
+            voiceModSetup,
+            roleSetupSuccess,
 
-            // channelSetup,
-            // generalSetup,
-            // channelSetupSuccess,
-
-            // testPage
+            channelSetup,
+            generalSetup,
+            channelSetupSuccess
         ], msg.author, msg.channel as TextChannel)
             .send()
     },
