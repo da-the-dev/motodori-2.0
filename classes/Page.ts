@@ -1,10 +1,13 @@
 import { MessageEmbed } from 'discord.js';
 import Button from './Button';
 import Menu from './Menu';
+import OneWay from './OneWay';
+import Toggle from './Toggle';
+type AnyButton = Button | Toggle | OneWay
 export default class Page {
     name: string
     embed: MessageEmbed
-    buttons?: Button[]
+    buttons?: AnyButton[]
     prev?: Page
     action?: (menu: Menu, currentPage?: Page) => void
     setup?: boolean

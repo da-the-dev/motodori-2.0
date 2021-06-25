@@ -2,6 +2,7 @@ import { MessageButton, ExtendedMessage, ExtendedMessageOptions, MessageComponen
 import { MessageEmbed, TextChannel, User } from 'discord.js';
 import { logger } from '../utility/logger';
 import Button from './Button';
+import Toggle from './Toggle';
 import Page from './Page';
 class TimeoutError extends Error {
     constructor(message?, name?) {
@@ -132,7 +133,8 @@ export default class Menu {
     /** Adds a listener for buttons */
     async addListener(page: Page) {
         const filter = (button: MessageComponent) => button.clicker.user.id === this.clicker.id
-        const collector = this.currentMessage.createButtonCollector(filter, { max: 1, time: 60000 })
+        const collector = this.currentMessage.createButtonCollector(filter, { max: 1, time: 60000 });
+        (page.buttons.find(b => b instanceof Toggle) as Toggle).start(this, null, page)
         collector.on('end', async collected => {
             try {
                 const button = collected.first();

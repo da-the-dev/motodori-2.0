@@ -3,6 +3,7 @@ import { BaseCommand } from '../../headers/interfaces'
 import { DBServer, Menu, Button, Page } from "../../headers/classes";
 import { embed, logger } from '../../headers/utility'
 import { Message, MessageEmbed, TextChannel } from 'discord.js';
+import Toggle from '../../classes/Toggle';
 
 const defaultButton = {
     style: 'gray'
@@ -89,7 +90,6 @@ const adminSetup: Page = {
         "description": "Теперь упомяните роль и отправьте сообщение",
         "color": 3092790
     }),
-    buttons: [],
     action: async menu => {
         await saveRoleToSettings(menu, 'admin')
     },
@@ -102,7 +102,6 @@ const moderatorSetup: Page = {
         "description": "Теперь упомяните роль и отправьте сообщение",
         "color": 3092790
     }),
-    buttons: [],
     action: async menu => {
         await saveRoleToSettings(menu, 'moderator')
     },
@@ -115,7 +114,6 @@ const chatModSetup: Page = {
         "description": "Теперь упомяните роль и отправьте сообщение",
         "color": 3092790
     }),
-    buttons: [],
     action: async menu => {
         await saveRoleToSettings(menu, 'chatMod')
     },
@@ -128,7 +126,6 @@ const voiceModSetup: Page = {
         "description": "Теперь упомяните роль и отправьте сообщение",
         "color": 3092790
     }),
-    buttons: [],
     action: async menu => {
         await saveRoleToSettings(menu, 'voiceMod')
     },
@@ -141,7 +138,6 @@ const roleSetupSuccess: Page = {
         "description": "Роль успешно установлена!",
         "color": 3092790
     }),
-    buttons: [],
     prev: rolesSetup
 }
 
@@ -203,7 +199,7 @@ const channelSetupSuccess: Page = {
     prev: channelSetup
 }
 
-// 
+// Functionality toggles
 const sMsg = 'Настройки сервера'
 /** @example Usage: `.settings` */
 const command: BaseCommand = {
@@ -211,16 +207,18 @@ const command: BaseCommand = {
         await new Menu([
             settingsMenu,
 
-            rolesSetup,
-            adminSetup,
-            moderatorSetup,
-            chatModSetup,
-            voiceModSetup,
-            roleSetupSuccess,
+            // rolesSetup,
+            // adminSetup,
+            // moderatorSetup,
+            // chatModSetup,
+            // voiceModSetup,
+            // roleSetupSuccess,
 
-            channelSetup,
-            generalSetup,
-            channelSetupSuccess
+            // channelSetup,
+            // generalSetup,
+            // channelSetupSuccess,
+
+            // testPage
         ], msg.author, msg.channel as TextChannel)
             .send()
     },
