@@ -8,7 +8,7 @@ export default class OneWay extends Button {
     public state: boolean
     constructor() { super() }
 
-    setAction(action: (menu: Menu, button: MessageComponent, currentPage: Page) => void) {
+    setAction(action: (menu: Menu, button?: MessageComponent, currentPage?: Page) => void) {
         const toggle = async (menu: Menu) => {
             const page = menu.pages.find(p => p.buttons && p.buttons.find(b => b.button.custom_id == this.button.custom_id))
             logger.debug(page.name)
@@ -26,8 +26,9 @@ export default class OneWay extends Button {
         super.setButton(button)
         return this
     }
-    setState(state: boolean) {
-        this.button.setDisabled(state)
+    init(initFoo: (button: OneWay) => void) {
+        initFoo(this)
+        return this
     }
 }
 
