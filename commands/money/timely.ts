@@ -56,14 +56,3 @@ const command: BaseCommand = {
     flag: 'economy'
 }
 export = command
-
-module.exports =
-    /**
-    * @param {Array<string>} args Command argument
-    * @param {Discord.Message} msg Discord message object
-    * @param {Discord.Client} client Discord client object
-    * @description Usage: .timely
-    */
-    async (args, msg, client) => {
-
-    }
