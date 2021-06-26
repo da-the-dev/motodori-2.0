@@ -58,12 +58,12 @@ export default class Toggle {
     setState(state: boolean) {
         switch (state) {
             case true:
-                this.action = this.on
                 this.button.setStyle(3)
+                this.action = this.off
                 break
             case false:
-                this.action = this.off
                 this.button.setStyle(4)
+                this.action = this.on
                 break
         }
         this.inited = true
