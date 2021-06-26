@@ -157,7 +157,8 @@ export default class Menu {
             } catch (error) {
                 if (error instanceof TimeoutError) {
                     if (this.currentMessage.deletable)
-                        await this.currentMessage.delete()
+                        this.currentMessage.delete()
+                            .catch(() => { })
                 }
                 else
                     throw error
