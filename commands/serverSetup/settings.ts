@@ -3,6 +3,7 @@ import { BaseCommand } from '../../headers/interfaces'
 import { DBServer, Menu, Button, Toggle, OneWay, Page } from "../../headers/classes";
 import { embed, logger } from '../../headers/utility'
 import { Message, MessageEmbed, TextChannel } from 'discord.js';
+import { updateCache } from '../../headers/globals';
 
 const defaultButton = {
     style: 'gray'
@@ -48,7 +49,7 @@ const rolesSetup = new Page()
     .setName('rolesSetup')
     .setEmbed(new MessageEmbed({
         "title": "Настройка ролей",
-        "description": "Для перехода к настройкам ролей, выберете одну из них ниже\n**Описание ролей:**\n`1.` *Администрация* ⏤ администраторы сервера\n`2.` *Модераторы* ⏤ модераторы сервера, на уровень ниже администрации\n`3.` *Чат модераторы* ⏤ модераторы сервера, ответственные за порядок в текстовых чатах. На уровень ниже модераторов.\n`4.` *Войс модераторы* ⏤ модераторы сервера, ответственные за порядок в голосовых чатах. На уровень ниже чат модераторов.",
+        "description": "Для перехода к настройкам ролей, выберете одну из них ниже\n**Описание ролей:**\n`1.` *Администратор* ⏤ администратор сервера\n`2.` *Модератор* ⏤ модератор сервера, на уровень ниже администрации\n`3.` *Чат модератор* ⏤ модератор сервера, ответственный за порядок в текстовых чатах. На уровень ниже модераторов.\n`4.` *Войс модератор* ⏤ модератор сервера, ответственный за порядок в голосовых чатах. На уровень ниже чат модераторов.",
         "color": 3092790
     }))
     .setButtons([
@@ -70,7 +71,7 @@ const rolesSetup = new Page()
             }),
         new Button()
             .setButton(new MessageButton(defaultButton)
-                .setLabel('Чат модераторы')
+                .setLabel('Чат модератор')
                 .setID('chatMod')
             )
             .setAction(async button => {
@@ -78,7 +79,7 @@ const rolesSetup = new Page()
             }),
         new Button()
             .setButton(new MessageButton(defaultButton)
-                .setLabel('Голосовая модерация')
+                .setLabel('Войс модератор')
                 .setID('voiceMod')
             )
             .setAction(async button => {
@@ -237,11 +238,13 @@ const togglables = new Page()
                 const server = await new DBServer(button.page.menu.guild.id).fetch()
                 server.data.settings.togglables.generalProtection = true
                 await server.save()
+                await updateCache(button.page.menu.guild.id)
             })
             .setOff(async button => {
                 const server = await new DBServer(button.page.menu.guild.id).fetch()
                 server.data.settings.togglables.generalProtection = false
                 await server.save()
+                await updateCache(button.page.menu.guild.id)
             })
             .setInit(async button => {
                 const server = await new DBServer(button.page.menu.guild.id).fetch()
@@ -298,6 +301,7 @@ async function saveRoleToSettings(menu: Menu, name: string) {
     const server = await new DBServer(menu.channel.guild.id).fetch();
     server.data.settings.roles[name] = role.id
     await server.save()
+    await updateCache(menu.guild.id)
     await menu.sendPage('roleSetupSuccess')
 }
 async function saveChannelIDToSettings(menu: Menu, name: string, type: 'text' | 'category' | 'voice') {
@@ -311,6 +315,7 @@ async function saveChannelIDToSettings(menu: Menu, name: string, type: 'text' | 
     const server = await new DBServer(menu.channel.guild.id).fetch();
     server.data.settings.channels[name] = id
     await server.save()
+    await updateCache(menu.guild.id)
     await menu.sendPage('channelSetupSuccess')
 }
 
