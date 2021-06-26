@@ -17,7 +17,7 @@ export interface Settings {
         generalProtection: boolean
     }
 }
-
+export type SettingsRole = 'admin' | 'moderator' | 'chatMod' | 'voiceMod'
 export const nullSettings: Settings = {
     roles: {
         admin: null,
