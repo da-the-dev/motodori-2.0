@@ -3,6 +3,7 @@ import Button from './Button';
 export default class OneWay extends Button {
     state: boolean
     inited = false
+    init: (button: OneWay) => Promise<void>
     constructor() { super() }
 
     setAction(action: (button: Button) => void) {
@@ -18,8 +19,8 @@ export default class OneWay extends Button {
         return this
     }
 
-    init(initFoo: (button: OneWay) => void) {
-        initFoo(this)
+    setInit(initFoo: (button: OneWay) => Promise<void>) {
+        this.init = initFoo
         return this
     }
 
