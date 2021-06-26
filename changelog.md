@@ -13,38 +13,38 @@ The format is based on [Keep a Changelog][Keep a Changelog] and this project adh
 ## [0.3.0] - 2021-06-26 ⏤ Menus and per-server settings
 
 ### Added
-- Added `Menu.ts` with a menu class that is based of `discord-buttons`
-- Added `Page.ts`, which is used by `Menu.ts`
-- Added `DBServer.ts`, which is simmular to `DBUser.ts`
-- Added `Button.ts`, which is a button class used by `Page.ts` and `Menu.ts`
-- Added `OneWay.ts`, which is a variant of `Button.ts` that, well, works only once (one way)
-- Added `Toggle.ts`, which is a variant of `Button.ts` that toggles between an **ON** and **OFF** states
-- Added `addFlag.ts`, which adds flags to the server
-- Added `delFlag.ts`, which removes flags from the server
-- Added `resetPerms.ts`, which resets flags to just `"default"`
-- Added `settings.ts`, which is a settings command
-- Added server flags support in `index.ts` command handler
-- Added `flag` field to `BaseCommand.ts`
-- Added flags to `av.ts`, `info.ts`, `bal.ts`, `transfer.ts`
-- Added `Server` interface to `DBInterfaces.ts`
-- Added `PersonalRoom` interface to `DBInterfaces.ts`
-- Added `Settings.ts` with an interface and `nullSettings` to be used in `DBServer.ts`
-- Added missing imports to headers
+- Added `Menu.ts` with a menu class that is based of `discord-buttons`.
+- Added `Page.ts`, which is used by `Menu.ts`.
+- Added `DBServer.ts`, which is simmular to `DBUser.ts`.
+- Added `Button.ts`, which is a button class used by `Page.ts` and `Menu.ts`.
+- Added `OneWay.ts`, which is a variant of `Button.ts` that, well, works only once (one way).
+- Added `Toggle.ts`, which is a variant of `Button.ts` that toggles between an **ON** and **OFF** states.
+- Added `addFlag.ts`, which adds flags to the server.
+- Added `delFlag.ts`, which removes flags from the server.
+- Added `resetPerms.ts`, which resets flags to just `"default"`.
+- Added `settings.ts`, which is a settings command.
+- Added server flags support in `index.ts` command handler.
+- Added `flag` field to `BaseCommand.ts`.
+- Added flags to `av.ts`, `info.ts`, `bal.ts`, `transfer.ts`.
+- Added `Server` interface to `DBInterfaces.ts`.
+- Added `PersonalRoom` interface to `DBInterfaces.ts`.
+- Added `Settings.ts` with an interface and `nullSettings` to be used in `DBServer.ts`.
+- Added missing imports to headers.
 
 ### Changed
-- Changed `serverSetup.ts` setup function to suite latest update
+- Changed `serverSetup.ts` setup function to suite latest update.
 
 ### Deprecated
-- Added and depecated `put.js`'s function
-- 
+- Added and depecated `put.js`'s function.
+
 ### Removed
-- Removed line 5 from `logger.ts`
+- Removed line 5 from `logger.ts`.
 
 ---
 ## [0.2.1] - 2021-06-20 ⏤ 0.2.0 Hotfix #1
 
 ### Changed
-  - Moved commands in separate folders for better management
+  - Moved commands in separate folders for better management.
 
 ---
 ## [0.2.0] - 2021-06-20 ⏤ Restructuring update
@@ -52,9 +52,9 @@ The format is based on [Keep a Changelog][Keep a Changelog] and this project adh
 ### Added
   - Added `Connection.ts` and `DBUser.ts` which contain classes from the removed `DB.ts`.
   - Added `/headers` which contains `classes.ts`, `interfaces.ts` and `utility.ts` which export modules from their respective folders.
-  - Added `walk` method that allows to put commands in separate folders in `index.ts`
+  - Added `walk` method that allows to put commands in separate folders in `index.ts`.
 ### Changed
-  - Disabled *esModuleInterop* in `tsconfig.json`
+  - Disabled *esModuleInterop* in `tsconfig.json`.
 ### Removed
   - Removed `DB.ts` and moved classes from it into separate files.
 ### Fixed
