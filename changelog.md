@@ -10,6 +10,37 @@ The format is based on [Keep a Changelog][Keep a Changelog] and this project adh
 
 ## [Latest]
 ---
+## [0.3.0] - 2021-06-26 ⏤ Menus and per-server settings
+
+### Added
+- Added `Menu.ts` with a menu class that is based of `discord-buttons`
+- Added `Page.ts`, which is used by `Menu.ts`
+- Added `DBServer.ts`, which is simmular to `DBUser.ts`
+- Added `Button.ts`, which is a button class used by `Page.ts` and `Menu.ts`
+- Added `OneWay.ts`, which is a variant of `Button.ts` that, well, works only once (one way)
+- Added `Toggle.ts`, which is a variant of `Button.ts` that toggles between an **ON** and **OFF** states
+- Added `addFlag.ts`, which adds flags to the server
+- Added `delFlag.ts`, which removes flags from the server
+- Added `resetPerms.ts`, which resets flags to just `"default"`
+- Added `settings.ts`, which is a settings command
+- Added server flags support in `index.ts` command handler
+- Added `flag` field to `BaseCommand.ts`
+- Added flags to `av.ts`, `info.ts`, `bal.ts`, `transfer.ts`
+- Added `Server` interface to `DBInterfaces.ts`
+- Added `PersonalRoom` interface to `DBInterfaces.ts`
+- Added `Settings.ts` with an interface and `nullSettings` to be used in `DBServer.ts`
+- Added missing imports to headers
+
+### Changed
+- Changed `serverSetup.ts` setup function to suite latest update
+
+### Deprecated
+- Added and depecated `put.js`'s function
+- 
+### Removed
+- Removed line 5 from `logger.ts`
+
+---
 ## [0.2.1] - 2021-06-20 ⏤ 0.2.0 Hotfix #1
 
 ### Changed
@@ -100,7 +131,8 @@ The format is based on [Keep a Changelog][Keep a Changelog] and this project adh
 [Semantic Versioning]: https://semver.org/
 
 <!-- Versions -->
-[Latest]: https://github.com/da-the-dev/motodori-2.0/compare/0.2.1...HEAD
+[Latest]: https://github.com/da-the-dev/motodori-2.0/compare/v0.3.0..HEAD
+[0.3.0]: https://github.com/da-the-dev/motodori-2.0/compare/v0.2.1..v0.3.0
 [0.2.1]: https://github.com/da-the-dev/motodori-2.0/compare/v0.2.0..v0.2.1
 [0.2.0]: https://github.com/da-the-dev/motodori-2.0/compare/v0.1.1..v0.2.0
 [0.1.1]: https://github.com/da-the-dev/motodori-2.0/compare/v0.1.0..v0.1.1
