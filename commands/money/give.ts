@@ -1,12 +1,17 @@
 import { BaseCommand } from '../../headers/interfaces'
-import { embed } from '../../headers/utility'
+import { embed, roleCheck } from '../../headers/utility'
 import { DBUser } from '../../headers/classes'
+import { cachedServers } from '../../headers/globals'
 
 const sMsg = 'Выдача валюты'
 /** @example Usage: `.give @member <amount>` */
 const command: BaseCommand = {
     foo: async (msg, args, client) => {
+        if (!roleCheck(msg, sMsg, 'admin'))
+            return
+
         const mMember = msg.mentions.members.first()
+
         if (!mMember) {
             embed(msg, sMsg, 'Не указан пользователь!', true); return
         }
