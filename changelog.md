@@ -5,6 +5,18 @@ The format is based on [Keep a Changelog][Keep a Changelog] and this project adh
 
 ## [Latest]
 ---
+## [0.3.2] - 2021-06-26
+
+### Added
+- Added `globals.ts`, which includs caches variable and `updateCache` function
+- Added cache update in `addFlag.ts`
+- Added cache update in `delFlag.ts`
+
+### Fixed
+- Fixed menu message deletion in `Menu.ts`
+- Fixed `saveRoleToSettings` when the role ID is not found
+
+---
 ## [0.3.1] - 2021-06-26
 
 ### Fixed
