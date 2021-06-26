@@ -12,6 +12,9 @@ export interface Settings {
             category: string,
             creatorID: string
         }
+    },
+    togglables: {
+        generalProtection: boolean
     }
 }
 
@@ -29,5 +32,8 @@ export const nullSettings: Settings = {
             category: null,
             creatorID: null
         }
+    },
+    togglables: {
+        generalProtection: undefined
     }
 }

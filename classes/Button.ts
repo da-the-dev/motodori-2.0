@@ -3,8 +3,9 @@ import Menu from './Menu';
 import Page from './Page'
 
 export default class Button {
-    public button: MessageButton
-    public action: (menu: Menu, button: MessageComponent, currentPage: Page) => void
+    page: Page
+    button: MessageButton
+    action: (button: Button) => void
 
     constructor() { }
 
@@ -12,7 +13,7 @@ export default class Button {
         this.button = button
         return this
     }
-    setAction(action: (menu: Menu, button?: MessageComponent, currentPage?: Page) => void) {
+    setAction(action: (button: Button) => void) {
         this.action = action
         return this
     }

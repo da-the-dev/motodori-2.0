@@ -1,26 +1,31 @@
 import { MessageButton, MessageComponent } from 'discord-buttons'
+import { logger } from '../utility/logger';
 import Menu from './Menu';
 import Page from './Page'
 
 export default class Toggle {
-    public button: MessageButton
-    public state: boolean = true
-    public menu: Menu
-    public action: (menu: Menu, button?: MessageComponent, currentPage?: Page) => void
-    private on: (menu: Menu, button?: MessageComponent, currentPage?: Page) => void
-    private off: (menu: Menu, button?: MessageComponent, currentPage?: Page) => void
+    button: MessageButton
+    state: boolean = true
+    page: Page
+    inited = false
+    action: (button: Toggle) => void
+    private on: (button: Toggle) => void
+    private off: (button: Toggle) => void
+    init: (button: Toggle) => Promise<void>
 
-    constructor() { }
+    constructor() {
+        this.action = () => { }
+    }
 
     private showON = async () => {
-        const page = this.menu.pages.find(p => p.buttons && p.buttons.find(b => b.button.custom_id == this.button.custom_id))
+        const page = this.page.menu.pages.find(p => p.buttons && p.buttons.find(b => b.button.custom_id == this.button.custom_id))
         page.buttons.find(b => b.button.custom_id == this.button.custom_id).button.setStyle(3)
-        await this.menu.sendPage(page.name)
+        await this.page.menu.sendPage(page.name)
     }
     private showOFF = async () => {
-        const page = this.menu.pages.find(p => p.buttons && p.buttons.find(b => b.button.custom_id == this.button.custom_id))
+        const page = this.page.menu.pages.find(p => p.buttons && p.buttons.find(b => b.button.custom_id == this.button.custom_id))
         page.buttons.find(b => b.button.custom_id == this.button.custom_id).button.setStyle(4)
-        await this.menu.sendPage(page.name)
+        await this.page.menu.sendPage(page.name)
     }
 
     setButton(button: MessageButton) {
@@ -28,9 +33,9 @@ export default class Toggle {
         return this
     }
 
-    setOn(action: (menu: Menu, button?: MessageComponent, currentPage?: Page) => void) {
-        this.on = (menu: Menu, button?: MessageComponent, currentPage?: Page) => {
-            action.call(this, [menu, button, currentPage])
+    setOn(action: (button: Toggle) => void) {
+        this.on = (button: Toggle) => {
+            action.call(this, this)
             this.showON.call(this)
             this.state = !this.state
             this.action = this.off
@@ -39,9 +44,9 @@ export default class Toggle {
         return this
     }
 
-    setOff(action: (menu: Menu, button?: MessageComponent, currentPage?: Page) => void) {
-        this.off = (menu: Menu, button?: MessageComponent, currentPage?: Page) => {
-            action.call(this, [menu, button, currentPage])
+    setOff(action: (button: Toggle) => void) {
+        this.off = (button: Toggle) => {
+            action.call(this, this)
             this.showOFF.call(this)
             this.state = !this.state
             this.action = this.on
@@ -50,14 +55,22 @@ export default class Toggle {
         return this
     }
 
-    init(initFoo: (button: Toggle) => void) {
-        initFoo(this)
-        return this
+    setState(state: boolean) {
+        switch (state) {
+            case true:
+                this.action = this.on
+                this.button.setStyle(3)
+                break
+            case false:
+                this.action = this.off
+                this.button.setStyle(4)
+                break
+        }
+        this.inited = true
     }
-    start(menu: Menu, button?: MessageComponent, currentPage?: Page) {
-        if (!this.on) throw new SyntaxError('No "On" action set')
-        if (!this.off) throw new SyntaxError('No "Off" action set')
-        this.menu = menu
-        this.action = this.state ? this.off : this.on
+
+    setInit(initFoo: (button: Toggle) => Promise<void>) {
+        this.init = initFoo
+        return this
     }
 }
