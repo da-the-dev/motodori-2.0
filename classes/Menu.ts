@@ -4,6 +4,7 @@ import Button from './Button';
 import Toggle from './Toggle';
 import Page from './Page';
 import { logger } from '../utility/logger';
+import OneWay from './OneWay';
 class TimeoutError extends Error {
     constructor(message?, name?) {
         super(message)
@@ -110,7 +111,7 @@ export default class Menu {
     async sendPage(name: string) {
         const page = this.pages.find(p => p.name == name)
         if (!page) throw new ReferenceError('No page found!');
-        await Promise.all((page.buttons.filter(b => b instanceof Toggle && b.inited == false) as Toggle[]).map(b => b.init(b)))
+        if (page.buttons) await Promise.all((page.buttons.filter(b => b instanceof Toggle || b instanceof OneWay && b.inited == false) as Toggle[]).map(b => b.init(b)))
 
         this.currentMessage = await this.currentMessage.edit({ embed: page.embed, buttons: page.buttons && page.buttons.map(b => b.button).length > 0 ? page.buttons.map(b => b.button) : null } as ExtendedMessageOptions) as ExtendedMessage
 
@@ -145,8 +146,6 @@ export default class Menu {
     async addListener(page: Page) {
         const filter = (button: MessageComponent) => button.clicker.user.id === this.clicker.id
         const collector = this.currentMessage.createButtonCollector(filter, { max: 1, time: 60000 });
-        // const toggleButtons = page.buttons.filter(b => b instanceof Toggle) as Toggle[]
-        // toggleButtons ? toggleButtons.forEach(b => (b.start(this, null, page))) : null
         collector.on('end', async collected => {
             try {
                 const button = collected.first();
