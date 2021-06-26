@@ -247,6 +247,8 @@ const togglables = new Page()
                 const server = await new DBServer(button.page.menu.guild.id).fetch()
                 logger.debug('generalProtection', server.data.settings.togglables.generalProtection)
                 button.setState(server.data.settings.togglables.generalProtection || false)
+                // if (!button.inited) {
+                // }
             })
     ])
     .setPrev(settingsMenu)
@@ -289,11 +291,10 @@ export = command
 
 async function saveRoleToSettings(menu: Menu, name: string) {
     const filter = (messsage: Message) => messsage.author.id === menu.clicker.id;
-    const role = (await menu.channel.awaitMessages(filter, { time: 60000, max: 1 })).first().mentions.roles.first()
-    if (!role) {
-        await menu.sendPage('roleSetupFail')
-        return
-    }
+    const message = (await menu.channel.awaitMessages(filter, { time: 60000, max: 1 })).first()
+    if (!message) { await menu.sendPage('roleSetupFail'); return }
+    const role = message.mentions.roles.first()
+    if (!role) { await menu.sendPage('roleSetupFail'); return }
     const server = await new DBServer(menu.channel.guild.id).fetch();
     server.data.settings.roles[name] = role.id
     await server.save()

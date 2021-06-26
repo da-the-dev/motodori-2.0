@@ -1,6 +1,7 @@
 import { BaseCommand } from '../../headers/interfaces'
 import { DBServer } from '../../headers/classes'
 import { logger, embed, } from '../../headers/utility'
+import { updateCache } from '../../headers/globals'
 
 const sMsg = 'Добавление флага (INDEV)'
 /** @example Usage: `.addFlag <flag>` */
@@ -12,6 +13,7 @@ const command: BaseCommand = {
             await server.save()
             logger.debug(server.data.flags)
             embed(msg, sMsg, `Добавлен флаг: ${args[0]}`)
+            await updateCache(msg.guild.id)
         }
     },
     help: (msg) => {

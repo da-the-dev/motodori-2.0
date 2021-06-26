@@ -4,6 +4,7 @@ import { config } from 'dotenv'; config()
 import { BaseCommand } from './headers/interfaces'
 import { Connection, DBServer } from "./headers/classes";
 import { simStr, walk, setupServer, logger } from './headers/utility';
+import { cachedServers, updateCache } from './headers/globals'
 
 
 // Handling errors
@@ -63,7 +64,10 @@ client.on('guildCreate', async guild => {
 
 // Once the bot recieves a message
 client.on('message', async msg => {
-    if (msg.author.id === '315339158912761856' && msg.content.startsWith(prefix) && !msg.author.bot) {
+    // if (msg.author.id === '315339158912761856' && msg.content.startsWith(prefix) && !msg.author.bot) {
+    if (msg.content.startsWith(prefix) && !msg.author.bot) {
+        logger.debug('here')
+
         const args = msg.content.slice(1).split(' ').map(e => e.trim())
         const command = args.shift()
 
@@ -71,7 +75,11 @@ client.on('message', async msg => {
         try {
             const execCommand = commands.get(command)
             if (!execCommand) throw new Error('No command found')
-            const flags = (await new DBServer(msg.guild.id).fetch()).data.flags
+
+            if (!cachedServers.has(msg.guild.id))
+                await updateCache(msg.guild.id)
+
+            const flags = cachedServers.get(msg.guild.id).data.flags
             logger.debug(flags, execCommand.flag, flags.includes(execCommand.flag))
 
             // If the server has the flag need for the command execution
