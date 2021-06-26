@@ -291,7 +291,7 @@ async function saveRoleToSettings(menu: Menu, name: string) {
     const filter = (messsage: Message) => messsage.author.id === menu.clicker.id;
     const role = (await menu.channel.awaitMessages(filter, { time: 60000, max: 1 })).first().mentions.roles.first()
     if (!role) {
-        await menu.sendPage('rolesSetupFail')
+        await menu.sendPage('roleSetupFail')
         return
     }
     const server = await new DBServer(menu.channel.guild.id).fetch();
