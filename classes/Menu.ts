@@ -111,7 +111,8 @@ export default class Menu {
     async sendPage(name: string) {
         const page = this.pages.find(p => p.name == name)
         if (!page) throw new ReferenceError('No page found!');
-        if (page.buttons) await Promise.all((page.buttons.filter(b => b instanceof Toggle || b instanceof OneWay && b.inited == false) as Toggle[]).map(b => b.init(b)))
+        if (page.buttons) await Promise.all((page.buttons.filter(b => b instanceof Toggle && b.inited == false) as Toggle[]).map(b => b.init(b)))
+        if (page.buttons) await Promise.all((page.buttons.filter(b => b instanceof OneWay && b.inited == false) as OneWay[]).map(b => b.init(b)))
 
         this.currentMessage = await this.currentMessage.edit({ embed: page.embed, buttons: page.buttons && page.buttons.map(b => b.button).length > 0 ? page.buttons.map(b => b.button) : null } as ExtendedMessageOptions) as ExtendedMessage
 
