@@ -1,8 +1,8 @@
-import { MessageButton, ExtendedMessage, ExtendedMessageOptions, MessageComponent } from 'discord-buttons'
+import { MessageButton, ExtendedMessage, ExtendedMessageOptions, MessageComponent, MessageActionRow } from 'discord-buttons'
 import { Guild, MessageEmbed, TextChannel, User } from 'discord.js';
 import Button from './Button';
 import Toggle from './Toggle';
-import Page from './Page';
+import Page, { AnyButton } from './Page';
 import { logger } from '../utility/logger';
 import OneWay from './OneWay';
 class TimeoutError extends Error {
@@ -21,6 +21,19 @@ function clone(obj) {
         temp[key] = clone(obj[key]);
 
     return temp;
+}
+
+function arrayChunk(array: any[], chunkSize: number): any[][] {
+    var arrayOfArrays = [];
+
+    if (array.length <= chunkSize) {
+        arrayOfArrays.push(array);
+    } else {
+        for (var i = 0; i < array.length; i += chunkSize) {
+            arrayOfArrays.push(array.slice(i, i + chunkSize));
+        }
+    }
+    return arrayOfArrays;
 }
 
 export default class Menu {
@@ -55,23 +68,37 @@ export default class Menu {
             if (!page.prev) throw new ReferenceError('No previous page defined in a secondary page')
             // Secondary page setup
             if (!page.setup) {
-                if (page.buttons) {
-                    // Adding "Back" button if page has buttons
-                    page.buttons.push(new Button()
-                        .setButton(new MessageButton()
-                            .setStyle(2)
-                            .setLabel('Назад')
-                            .setID(`back`))
-                        .setAction(async button => {
-                            await button.page.menu.sendPage(page.prev.name)
-                        })
-                    )
-                    // Chaining together better button IDs and settings their page
-                    page.buttons.forEach(b => {
-                        b.button.custom_id = `${this.channel.guild.id}-${page.prev.name}-${page.name}-${b.button.custom_id}`
-                        b.page = page
+
+                // Setup "close" button
+                if (!page.buttons) page.buttons = []
+                page.buttons.push(new Button()
+                    .setButton(new MessageButton()
+                        .setStyle(4)
+                        .setLabel('Закрыть')
+                        .setID(`close`))
+                    .setAction(async button => {
+                        await page.menu.currentMessage.delete()
+                        button.page.menu = null
                     })
+                )
+                // Adding "Back" button if page has buttons other than "close"
+                if (page.buttons.length > 1) {
+                    page.buttons.splice(page.buttons.length - 1, 0,
+                        new Button()
+                            .setButton(new MessageButton()
+                                .setStyle(2)
+                                .setLabel('Назад')
+                                .setID(`back`))
+                            .setAction(async button => {
+                                await button.page.menu.sendPage(page.prev.name)
+                            })
+                    )
                 }
+                // Chaining together better button IDs and settings their page
+                page.buttons.forEach(b => {
+                    b.button.custom_id = `${this.channel.guild.id}-${page.prev.name}-${page.name}-${b.button.custom_id}`
+                    b.page = page
+                })
 
                 // Chaining together the title
                 page.embed.title = (`${page.prev.embed.title}: ${page.embed.title[0].toLowerCase() + page.embed.title.slice(1)}`)
@@ -114,10 +141,13 @@ export default class Menu {
         if (page.buttons) await Promise.all((page.buttons.filter(b => b instanceof Toggle && b.inited == false) as Toggle[]).map(b => b.init(b)))
         if (page.buttons) await Promise.all((page.buttons.filter(b => b instanceof OneWay && b.inited == false) as OneWay[]).map(b => b.init(b)))
 
-        this.currentMessage = await this.currentMessage.edit({ embed: page.embed, buttons: page.buttons && page.buttons.map(b => b.button).length > 0 ? page.buttons.map(b => b.button) : null } as ExtendedMessageOptions) as ExtendedMessage
+        const rows = page.buttons ? arrayChunk(page.buttons, 5).map(ch => new MessageActionRow().addComponents(ch.map((b: AnyButton) => b.button))) : []
+
+        // this.currentMessage = await this.currentMessage.edit({ embed: page.embed, buttons: page.buttons && page.buttons.map(b => b.button).length > 0 ? page.buttons.map(b => b.button) : null } as ExtendedMessageOptions) as ExtendedMessage
+        this.currentMessage = await this.currentMessage.edit({ embed: page.embed, components: rows } as ExtendedMessageOptions) as ExtendedMessage
 
         if (page.action) page.action(page)
-        if (!page.action) this.addListener(page)
+        this.addListener(page)
 
         return this.currentMessage
     }
@@ -146,22 +176,19 @@ export default class Menu {
     /** Adds a listener for buttons */
     async addListener(page: Page) {
         const filter = (button: MessageComponent) => button.clicker.user.id === this.clicker.id
-        const collector = this.currentMessage.createButtonCollector(filter, { max: 1, time: 60000 });
-        collector.on('end', async collected => {
+        const collector = this.currentMessage.createButtonCollector(filter, { max: 1, time: 10000 });
+        collector.on('end', async (collected, reason) => {
             try {
                 const button = collected.first();
                 button ? button.defer() : (() => { throw new TimeoutError() })()
-
                 const actButton = page.buttons.find(b => b.button.custom_id == button.id)
+
                 actButton.action(actButton as Toggle & Button)
             } catch (error) {
-                if (error instanceof TimeoutError) {
+                if (error instanceof TimeoutError)
                     if (this.currentMessage.deletable)
                         this.currentMessage.delete()
                             .catch(() => { })
-                }
-                else
-                    throw error
             }
         })
     }
