@@ -1,10 +1,11 @@
+import { ButtonCollector } from 'discord-buttons';
 import { MessageEmbed } from 'discord.js';
 import { logger } from '../utility/logger';
 import Button from './Button';
 import Menu from './Menu';
 import OneWay from './OneWay';
 import Toggle from './Toggle';
-type AnyButton = Button | Toggle
+export type AnyButton = Button | Toggle | OneWay
 
 export default class Page {
     name: string
