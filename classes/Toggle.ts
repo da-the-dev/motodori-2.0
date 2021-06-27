@@ -1,11 +1,11 @@
 import { MessageButton, MessageComponent } from 'discord-buttons'
-import { logger } from '../utility/logger';
-import Menu from './Menu';
+import { logger } from '../utility/logger'
+import Menu from './Menu'
 import Page from './Page'
 
 export default class Toggle {
     button: MessageButton
-    state: boolean = true
+    state = true
     page: Page
     inited = false
     action: (button: Toggle) => void
@@ -28,12 +28,12 @@ export default class Toggle {
         await this.page.menu.sendPage(page.name)
     }
 
-    setButton(button: MessageButton) {
+    setButton(button: MessageButton): Toggle {
         this.button = button
         return this
     }
 
-    setOn(action: (button: Toggle) => void) {
+    setOn(action: (button: Toggle) => void): Toggle {
         this.on = (button: Toggle) => {
             action.call(this, this)
             this.showON.call(this)
@@ -44,7 +44,7 @@ export default class Toggle {
         return this
     }
 
-    setOff(action: (button: Toggle) => void) {
+    setOff(action: (button: Toggle) => void): Toggle {
         this.off = (button: Toggle) => {
             action.call(this, this)
             this.showOFF.call(this)
@@ -55,7 +55,7 @@ export default class Toggle {
         return this
     }
 
-    setState(state: boolean) {
+    setState(state: boolean): void {
         switch (state) {
             case true:
                 this.button.setStyle(3)
@@ -69,7 +69,7 @@ export default class Toggle {
         this.inited = true
     }
 
-    setInit(initFoo: (button: Toggle) => Promise<void>) {
+    setInit(initFoo: (button: Toggle) => Promise<void>): Toggle {
         this.init = initFoo
         return this
     }

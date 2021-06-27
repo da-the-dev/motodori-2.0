@@ -1,10 +1,10 @@
 import { MessageButton, ExtendedMessage, ExtendedMessageOptions, MessageComponent, MessageActionRow } from 'discord-buttons'
-import { Guild, MessageEmbed, TextChannel, User } from 'discord.js';
-import Button from './Button';
-import Toggle from './Toggle';
-import Page, { AnyButton } from './Page';
-import { logger } from '../utility/logger';
-import OneWay from './OneWay';
+import { Guild, MessageEmbed, TextChannel, User } from 'discord.js'
+import Button from './Button'
+import Toggle from './Toggle'
+import Page, { AnyButton } from './Page'
+import { logger } from '../utility/logger'
+import OneWay from './OneWay'
 class TimeoutError extends Error {
     constructor(message?, name?) {
         super(message)
@@ -14,26 +14,26 @@ class TimeoutError extends Error {
 
 function clone(obj) {
     if (obj == null || typeof (obj) != 'object')
-        return obj;
+        return obj
 
-    var temp = new obj.constructor();
-    for (var key in obj)
-        temp[key] = clone(obj[key]);
+    const temp = new obj.constructor()
+    for (const key in obj)
+        temp[key] = clone(obj[key])
 
-    return temp;
+    return temp
 }
 
 function arrayChunk(array: any[], chunkSize: number): any[][] {
-    var arrayOfArrays = [];
+    const arrayOfArrays = []
 
     if (array.length <= chunkSize) {
-        arrayOfArrays.push(array);
+        arrayOfArrays.push(array)
     } else {
-        for (var i = 0; i < array.length; i += chunkSize) {
-            arrayOfArrays.push(array.slice(i, i + chunkSize));
+        for (let i = 0; i < array.length; i += chunkSize) {
+            arrayOfArrays.push(array.slice(i, i + chunkSize))
         }
     }
-    return arrayOfArrays;
+    return arrayOfArrays
 }
 
 export default class Menu {
@@ -50,7 +50,7 @@ export default class Menu {
     }
 
     /** Adds a page to the menu and sets it up */
-    addPage(page: Page) {
+    addPage(page: Page): Menu {
         if (page.buttons && page.buttons.length == 0) throw new SyntaxError('Buttons array cannot be empty. Can be null or an array')
         // if (page.setup !== undefined) throw new SyntaxError('Pages "setup" value should not be set')
 
@@ -109,7 +109,7 @@ export default class Menu {
         return this
     }
     /** Adds multiple pages*/
-    addPages(pages: Page[]) {
+    addPages(pages: Page[]): Menu {
         pages.forEach(p => {
             this.addPage(p)
         })
@@ -125,7 +125,7 @@ export default class Menu {
     }
 
     /** Sends the menu to the designated channel */
-    async send() {
+    async send(): Promise<Menu> {
         this.verifyMenu()
         const page = this.pages[0]
         this.currentMessage = await this.channel.send({ embed: page.embed, buttons: page.buttons.map(b => b.button) || null } as ExtendedMessageOptions) as ExtendedMessage
@@ -135,9 +135,9 @@ export default class Menu {
     }
 
     /** Sends the page with name `name` */
-    async sendPage(name: string) {
+    async sendPage(name: string): Promise<ExtendedMessage> {
         const page = this.pages.find(p => p.name == name)
-        if (!page) throw new ReferenceError('No page found!');
+        if (!page) throw new ReferenceError('No page found!')
         if (page.buttons) await Promise.all((page.buttons.filter(b => b instanceof Toggle && b.inited == false) as Toggle[]).map(b => b.init(b)))
         if (page.buttons) await Promise.all((page.buttons.filter(b => b instanceof OneWay && b.inited == false) as OneWay[]).map(b => b.init(b)))
 
@@ -153,13 +153,13 @@ export default class Menu {
     }
 
     /**@deprecated This method should not be used */
-    async clearButtons() {
+    async clearButtons(): Promise<ExtendedMessage> {
         this.currentMessage = await this.currentMessage.edit({ embed: this.currentMessage.embeds[0], buttons: null } as ExtendedMessageOptions) as ExtendedMessage
         return this.currentMessage
     }
 
     /**@deprecated This method should not be used */
-    async sendEmbed(emb: MessageEmbed) {
+    async sendEmbed(emb: MessageEmbed): Promise<ExtendedMessage> {
         await this.clearButtons()
         this.currentMessage = await this.currentMessage.edit({ embed: emb }) as ExtendedMessage
         return this.currentMessage
@@ -168,18 +168,18 @@ export default class Menu {
     /** Deletes the menu message 
      * @deprecated This function causes API errors, do not use
      */
-    async delete(time?: number) {
+    async delete(time?: number): Promise<void> {
         if (!this.currentMessage.deleted)
             await this.currentMessage.delete({ timeout: time })
     }
 
     /** Adds a listener for buttons */
-    async addListener(page: Page) {
+    async addListener(page: Page): Promise<void> {
         const filter = (button: MessageComponent) => button.clicker.user.id === this.clicker.id
-        const collector = this.currentMessage.createButtonCollector(filter, { max: 1, time: 10000 });
+        const collector = this.currentMessage.createButtonCollector(filter, { max: 1, time: 10000 })
         collector.on('end', async (collected, reason) => {
             try {
-                const button = collected.first();
+                const button = collected.first()
                 button ? button.defer() : (() => { throw new TimeoutError() })()
                 const actButton = page.buttons.find(b => b.button.custom_id == button.id)
 
@@ -188,7 +188,9 @@ export default class Menu {
                 if (error instanceof TimeoutError)
                     if (this.currentMessage.deletable)
                         this.currentMessage.delete()
-                            .catch(() => { })
+                            .catch(() => {
+                                // do nothing.
+                            })
             }
         })
     }

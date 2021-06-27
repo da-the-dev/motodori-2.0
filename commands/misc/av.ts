@@ -10,7 +10,7 @@ const command: BaseCommand = {
         const emb = embed(msg, sMsg, `<@${mMember.id}>`, false, false) as MessageEmbed
         emb
             .setThumbnail('')
-            .setImage(mMember.user.displayAvatarURL({ dynamic: true }) + "?size=2048")
+            .setImage(mMember.user.displayAvatarURL({ dynamic: true }) + '?size=2048')
 
         msg.channel.send(emb)
     },

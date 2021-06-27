@@ -45,7 +45,6 @@ export function redisHandler(client) {
                 //     utl.lotery.generate(client.guild)
                 // }
             })
-            return
         })
     }
 }

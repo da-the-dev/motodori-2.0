@@ -8,13 +8,13 @@ export class DBServer {
     private guildID: string
     private id: string
 
-    constructor(guildID) {
+    constructor(guildID: string) {
         this.connection = Connection.getConnection()
         this.guildID = guildID
     }
 
     /** Fetch servers's data from DB */
-    async fetch() {
+    async fetch(): Promise<DBServer> {
         const serverData = await this.connection.get(this.guildID, 'serverSettings')
 
         this.data.id = this.id
@@ -31,8 +31,8 @@ export class DBServer {
     }
 
     /** Get the optimized version of the servers's data */
-    private get() {
-        var serverData: any = {}
+    private get(): Record<string, any> {
+        const serverData: Record<string, any> = {}
 
         this.data.flags && this.data.flags.length > 0 ? serverData.flags = this.data.flags : null
         this.data.def ? serverData.def = this.data.def : null
@@ -44,8 +44,8 @@ export class DBServer {
         return serverData
     }
 
-    async save() {
-        await this.connection.set(this.guildID, 'serverSettings', this.get())
+    async save(): Promise<'OK'> {
+        return await this.connection.set(this.guildID, 'serverSettings', this.get())
     }
 }
 
@@ -54,5 +54,5 @@ function removeNullFields(obj: any) {
         Object.entries(obj)
             .filter(([_, v]) => v != null)
             .map(([k, v]) => [k, v === Object(v) ? removeNullFields(v) : v])
-    );
+    )
 }

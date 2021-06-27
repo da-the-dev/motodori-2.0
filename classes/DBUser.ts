@@ -7,14 +7,14 @@ export class DBUser {
     private guildID: string
     private id: string
 
-    constructor(guildID, id) {
+    constructor(guildID: string, id: string) {
         this.connection = Connection.getConnection()
         this.guildID = guildID
         this.id = id
     }
 
     /** Fetch user's data from DB */
-    async fetch() {
+    async fetch(): Promise<DBUser> {
         const userData = await this.connection.get(this.guildID, this.id)
 
         this.data.id = this.id
@@ -40,8 +40,8 @@ export class DBUser {
     }
 
     /** Get the optimized version of the user's data */
-    private get() {
-        var userData: any = {}
+    private get(): Record<string, any> {
+        const userData: Record<string, any> = {}
 
         if (this.data.money && this.data.money > 0) userData.money = this.data.money
         if (this.data.msgs && this.data.msgs > 0) userData.msgs = this.data.msgs
@@ -66,7 +66,7 @@ export class DBUser {
         return userData
     }
 
-    async save() {
-        await this.connection.set(this.guildID, this.id, this.get())
+    async save(): Promise<'OK'> {
+        return await this.connection.set(this.guildID, this.id, this.get())
     }
 }

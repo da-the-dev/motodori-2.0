@@ -1,5 +1,5 @@
 import { MessageButton, MessageComponent } from 'discord-buttons'
-import Menu from './Menu';
+import Menu from './Menu'
 import Page from './Page'
 
 export default class Button {
@@ -7,13 +7,11 @@ export default class Button {
     button: MessageButton
     action: (button: Button) => void
 
-    constructor() { }
-
-    setButton(button: MessageButton) {
+    setButton(button: MessageButton): Button {
         this.button = button
         return this
     }
-    setAction(action: (button: Button) => void) {
+    setAction(action: (button: Button) => void): Button {
         this.action = action
         return this
     }

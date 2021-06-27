@@ -1,6 +1,6 @@
 import { Message, MessageEmbed } from 'discord.js'
 
-export function embed(msg: Message, title: string, content = '', ping = false, send = true) {
+export function embed(msg: Message, title: string, content = '', ping = false, send = true): Promise<Message> | MessageEmbed {
     const emb = new MessageEmbed()
         .setTitle(`${title}`)
         .setColor('#2F3136')

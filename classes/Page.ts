@@ -1,10 +1,10 @@
-import { ButtonCollector } from 'discord-buttons';
-import { MessageEmbed } from 'discord.js';
-import { logger } from '../utility/logger';
-import Button from './Button';
-import Menu from './Menu';
-import OneWay from './OneWay';
-import Toggle from './Toggle';
+import { ButtonCollector } from 'discord-buttons'
+import { MessageEmbed } from 'discord.js'
+import { logger } from '../utility/logger'
+import Button from './Button'
+import Menu from './Menu'
+import OneWay from './OneWay'
+import Toggle from './Toggle'
 export type AnyButton = Button | Toggle | OneWay
 
 export default class Page {
@@ -16,25 +16,23 @@ export default class Page {
     action?: (page: Page) => void
     setup?: boolean
 
-    constructor() { }
-
-    setName(name: string) {
+    setName(name: string): Page {
         this.name = name
         return this
     }
-    setEmbed(embed: MessageEmbed) {
+    setEmbed(embed: MessageEmbed): Page {
         this.embed = embed
         return this
     }
-    setButtons(buttons: AnyButton[]) {
+    setButtons(buttons: AnyButton[]): Page {
         this.buttons = buttons
         return this
     }
-    setAction(action: (page: Page) => void) {
+    setAction(action: (page: Page) => void): Page {
         this.action = action
         return this
     }
-    setPrev(prev: Page) {
+    setPrev(prev: Page): Page {
         this.prev = prev
         return this
     }

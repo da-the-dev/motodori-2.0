@@ -1,4 +1,4 @@
-import { Message, Client } from "discord.js"
+import { Message, Client } from 'discord.js'
 
 type Flags = 'default' | 'economy'
 export interface BaseCommand {
