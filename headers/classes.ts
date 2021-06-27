@@ -1,5 +1,6 @@
 
 export * from '../classes/Connection'
+export * from '../classes/RedCon'
 export * from '../classes/DBUser'
 export * from '../classes/DBServer'
 export * from '../classes/Menu'
