@@ -2,8 +2,8 @@
 import { Client, Collection } from 'discord.js'
 import { config } from 'dotenv'; config()
 import { BaseCommand } from './headers/interfaces'
-import { Connection, DBServer } from "./headers/classes";
-import { simStr, walk, setupServer, logger } from './headers/utility';
+import { Connection, RedCon } from './headers/classes'
+import { simStr, walk, setupServer, logger, redisHandler } from './headers/utility'
 import { cachedServers, updateCache } from './headers/globals'
 
 
@@ -25,17 +25,18 @@ process.on('SIGINT', async () => {
     await Connection.closeAll()
     process.exit(0)
 })
-async function exitHandler(options, exitCode) {
+async function exitHandler() {
     logger.mark('Bot process restarted via nodemon')
     await Connection.closeAll()
     process.exit(0)
 }
-process.on('SIGUSR1', exitHandler.bind(null, { exit: true, cleanup: true }));
-process.on('SIGUSR2', exitHandler.bind(null, { exit: true, cleanup: true }));
+process.on('SIGUSR1', exitHandler.bind(null, null))
+process.on('SIGUSR2', exitHandler.bind(null, null))
 
 // Client setup
 const prefix = '!'
 const client = new Client({ partials: ['CHANNEL', 'MESSAGE', 'REACTION'] })
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 require('discord-buttons')(client)
 const commands: Collection<string, BaseCommand> = new Collection()
 walk('./commands').filter(cn => cn.endsWith('.ts')).forEach(async (cn: string) => {
@@ -54,7 +55,11 @@ client.once('ready', async () => {
         // new Connection().connect(),
         new Connection().connect()
     ])
+    // new RedCon()
+    // new RedCon()
+    new RedCon()
     logger.info('Bot started')
+    redisHandler(client)
 })
 // Once the bot is added on another server
 client.on('guildCreate', async guild => {
@@ -66,7 +71,7 @@ client.on('guildCreate', async guild => {
 client.on('message', async msg => {
     if (msg.author.id === '315339158912761856' && msg.content.startsWith(prefix) && !msg.author.bot) {
         // if (msg.content.startsWith(prefix) && !msg.author.bot) {
-        logger.debug('here')
+        // logger.debug('here')
 
         const args = msg.content.slice(1).split(' ').map(e => e.trim())
         const command = args.shift()
@@ -94,7 +99,7 @@ client.on('message', async msg => {
             if (err.message === 'No command found') {
                 let closeCommand: string
                 let max = 0
-                for (let cn of commands.keys())
+                for (const cn of commands.keys())
                     if (max < Math.max(max, simStr(cn, command))) {
                         max = Math.max(max, simStr(cn, command))
                         closeCommand = cn
