@@ -1,5 +1,5 @@
 export type SettingsRole = 'admin' | 'moderator' | 'chatMod' | 'voiceMod' | 'banned' | 'muted'
-export type SettingsChannel = '_general' | '_flood'
+export type SettingsChannel = 'general' | 'flood'
 export interface Settings {
     roles: {
         admin: string,
