@@ -1,7 +1,7 @@
 import { DBUser, RedCon } from '../../headers/classes'
 import { cachedServers } from '../../headers/globals'
 import { BaseCommand } from '../../headers/interfaces'
-import { roleCheck, embed, roleSetRoleCheck } from '../../headers/utility'
+import { roleCheck, embed, setRoleCheck } from '../../headers/utility'
 
 const sMsg = 'Мут'
 
@@ -10,7 +10,7 @@ const command: BaseCommand = {
     foo: async (msg, args, client) => {
         if (!roleCheck(msg, sMsg, 'voiceMod'))
             return
-        if (!roleSetRoleCheck(msg, sMsg, msg.guild.id, 'muted'))
+        if (!setRoleCheck(msg, sMsg, msg.guild.id, 'muted'))
             return
         const mMember = msg.mentions.members.first()
         if (!mMember) {

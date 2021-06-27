@@ -1,7 +1,7 @@
 import { DBUser } from '../../headers/classes'
 import { cachedServers } from '../../headers/globals'
 import { BaseCommand } from '../../headers/interfaces'
-import { roleCheck, embed, roleSetRoleCheck } from '../../headers/utility'
+import { roleCheck, embed, setRoleCheck } from '../../headers/utility'
 const sMsg = 'Локальная блокировка'
 
 /** @example Usage: `.ban @member` */
@@ -10,7 +10,7 @@ const command: BaseCommand = {
         if (!roleCheck(msg, sMsg, 'admin'))
             return
 
-        if (!roleSetRoleCheck(msg, sMsg, msg.guild.id, 'banned'))
+        if (!setRoleCheck(msg, sMsg, msg.guild.id, 'banned'))
             return
 
         const mMember = msg.mentions.members.first()
