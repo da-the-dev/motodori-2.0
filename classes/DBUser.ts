@@ -3,7 +3,7 @@ import { Connection } from './Connection'
 
 export class DBUser {
     private connection: Connection
-    public data: User = {}
+    public data = ({} as any) as User
     private guildID: string
     private id: string
 
@@ -40,7 +40,7 @@ export class DBUser {
     }
 
     /** Get the optimized version of the user's data */
-    get() {
+    private get() {
         var userData: any = {}
 
         if (this.data.money && this.data.money > 0) userData.money = this.data.money

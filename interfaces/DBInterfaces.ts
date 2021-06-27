@@ -1,34 +1,34 @@
 import { Settings } from './Settings'
 export declare interface Server {
-    id?: string,
-    flags?: string[],
-    def?: boolean,
-    roles?: string[],
-    customRoles?: CustomRole[],
-    personalRooms?: PersonalRoom[],
-    settings?: Settings
+    id: string,
+    flags: string[],
+    def: boolean,
+    roles: string[],
+    customRoles: CustomRole[],
+    personalRooms: PersonalRoom[],
+    settings: Settings
 }
 
 /** User data interface */
 export declare interface User {
-    id?: string,
-    money?: number,
-    msgs?: number,
-    voiceTime?: number,
-    inv?: ShopRole[],
-    customInv?: CustomRole[],
-    warns?: Warn[],
-    ban?: boolean,
-    toxic?: boolean,
-    mute?: boolean,
-    pics?: boolean,
-    uact?: boolean,
-    disGameRole?: boolean,
-    status?: string,
-    streak?: number,
-    rewardTimestamp?: number,
-    invites?: number,
-    discount?: number
+    id: string,
+    money: number,
+    msgs: number,
+    voiceTime: number,
+    inv: ShopRole[],
+    customInv: CustomRole[],
+    warns: Warn[],
+    ban: boolean,
+    toxic: boolean,
+    mute: boolean,
+    pics: boolean,
+    uact: boolean,
+    disGameRole: boolean,
+    status: string,
+    streak: number,
+    rewardTimestamp: number,
+    invites: number,
+    discount: number
 }
 
 /** Custom role interface */

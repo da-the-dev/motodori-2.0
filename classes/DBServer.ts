@@ -4,7 +4,7 @@ import { mergeWith } from 'lodash'
 
 export class DBServer {
     private connection: Connection
-    public data: Server = {}
+    public data = ({} as any) as Server
     private guildID: string
     private id: string
 
@@ -31,7 +31,7 @@ export class DBServer {
     }
 
     /** Get the optimized version of the servers's data */
-    get() {
+    private get() {
         var serverData: any = {}
 
         this.data.flags && this.data.flags.length > 0 ? serverData.flags = this.data.flags : null
