@@ -1,3 +1,6 @@
+// @ts-nocheck
+
+// Source https://vanillajstoolkit.com/helpers/put/
 /**
  * Add items to an object at a specific path
  * (c) 2021 Chris Ferdinandi, MIT License, https://gomakethings.com
@@ -6,7 +9,6 @@
  * @param  {*}            val  The value to assign
  */
 module.exports = function put(obj, path, val) {
-
     /**
      * If the path is a string, convert it to an array
      * @param  {String|Array} path The path
@@ -15,10 +17,10 @@ module.exports = function put(obj, path, val) {
     function stringToPath(path) {
 
         // If the path isn't a string, return it
-        if(typeof path !== 'string') return path;
+        if(typeof path !== 'string') return path
 
         // Create new array
-        let output = [];
+        let output = []
 
         // Split to an array with dot notation
         path.split('.').forEach(function(item) {
@@ -28,36 +30,36 @@ module.exports = function put(obj, path, val) {
 
                 // Push to the new array
                 if(key.length > 0) {
-                    output.push(key);
+                    output.push(key)
                 }
 
-            });
+            })
 
-        });
+        })
 
-        return output;
+        return output
 
     }
 
     // Convert the path to an array if not already
-    path = stringToPath(path);
+    path = stringToPath(path)
 
     // Cache the path length and current spot in the object
-    let length = path.length;
-    let current = obj;
+    let length = path.length
+    let current = obj
 
     // Loop through the path
     path.forEach(function(key, index) {
 
         // Check if the assigned key should be an array
-        let isArray = key.slice(-2) === '[]';
+        let isArray = key.slice(-2) === '[]'
 
         // If so, get the true key name by removing the trailing []
-        key = isArray ? key.slice(0, -2) : key;
+        key = isArray ? key.slice(0, -2) : key
 
         // If the key should be an array and isn't, create an array
         if(isArray && !Array.isArray(current[key])) {
-            current[key] = [];
+            current[key] = []
         }
 
         // If this is the last item in the loop, assign the value
@@ -66,9 +68,9 @@ module.exports = function put(obj, path, val) {
             // If it's an array, push the value
             // Otherwise, assign it
             if(isArray) {
-                current[key].push(val);
+                current[key].push(val)
             } else {
-                current[key] = val;
+                current[key] = val
             }
         }
 
@@ -77,16 +79,14 @@ module.exports = function put(obj, path, val) {
 
             // If the key doesn't exist, create it
             if(!current[key]) {
-                current[key] = {};
+                current[key] = {}
             }
 
             // Update the current place in the object
-            current = current[key];
+            current = current[key]
 
         }
 
-    });
+    })
 
 }
-
-// Source https://vanillajstoolkit.com/helpers/put/

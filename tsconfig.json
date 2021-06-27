@@ -6,6 +6,7 @@
         "sourceMap": true,
         "pretty": true,
         "allowJs": true,
+        "checkJs": true,
         "downlevelIteration": true,
         "outDir": "out",
         "skipLibCheck": true
