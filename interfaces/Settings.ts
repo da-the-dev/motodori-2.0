@@ -1,9 +1,13 @@
+export type SettingsRole = 'admin' | 'moderator' | 'chatMod' | 'voiceMod' | 'banned' | 'muted'
+export type SettingsChannel = '_general' | '_flood'
 export interface Settings {
     roles: {
         admin: string,
         moderator: string,
         chatMod: string,
         voiceMod: string,
+        banned: string,
+        muted: string
     },
     channels: {
         general: string,
@@ -17,13 +21,15 @@ export interface Settings {
         generalProtection: boolean
     }
 }
-export type SettingsRole = 'admin' | 'moderator' | 'chatMod' | 'voiceMod'
+
 export const nullSettings: Settings = {
     roles: {
         admin: null,
         moderator: null,
         chatMod: null,
         voiceMod: null,
+        banned: null,
+        muted: null
     },
     channels: {
         general: null,

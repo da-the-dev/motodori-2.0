@@ -1,9 +1,9 @@
 import { MessageButton } from 'discord-buttons'
 import { BaseCommand } from '../../headers/interfaces'
-import { DBServer, Menu, Button, Toggle, OneWay, Page } from "../../headers/classes";
+import { DBServer, Menu, Button, Toggle, Page } from '../../headers/classes'
 import { embed, logger } from '../../headers/utility'
-import { Message, MessageEmbed, TextChannel } from 'discord.js';
-import { updateCache } from '../../headers/globals';
+import { Message, MessageEmbed, TextChannel } from 'discord.js'
+import { updateCache } from '../../headers/globals'
 
 const defaultButton = {
     style: 'gray'
@@ -13,9 +13,9 @@ const defaultButton = {
 const settingsMenu = new Page()
     .setName('settings')
     .setEmbed(new MessageEmbed({
-        "title": "Настройки сервера",
-        "description": "Для перехода к настройкам сервера, используйте кнопки ниже\n**Описание кнопок**\n`1.` Роли ⏤ настройка ролей, какая роль является какой\n",
-        "color": 3092790
+        'title': 'Настройки сервера',
+        'description': 'Для перехода к настройкам сервера, используйте кнопки ниже\n**Описание кнопок**\n`1.` Роли ⏤ настройка ролей, какая роль является какой\n',
+        'color': 3092790
     }))
     .setButtons([
         new Button()
@@ -48,9 +48,9 @@ const settingsMenu = new Page()
 const rolesSetup = new Page()
     .setName('rolesSetup')
     .setEmbed(new MessageEmbed({
-        "title": "Настройка ролей",
-        "description": "Для перехода к настройкам ролей, выберете одну из них ниже\n**Описание ролей:**\n`1.` *Администратор* ⏤ администратор сервера\n`2.` *Модератор* ⏤ модератор сервера, на уровень ниже администрации\n`3.` *Чат модератор* ⏤ модератор сервера, ответственный за порядок в текстовых чатах. На уровень ниже модераторов.\n`4.` *Войс модератор* ⏤ модератор сервера, ответственный за порядок в голосовых чатах. На уровень ниже чат модераторов.",
-        "color": 3092790
+        'title': 'Настройка ролей',
+        'description': 'Для перехода к настройкам ролей, выберете одну из них ниже\n**Описание ролей:**\n`1.` *Администратор* ⏤ администратор сервера\n`2.` *Модератор* ⏤ модератор сервера, на уровень ниже администрации\n`3.` *Чат модератор* ⏤ модератор сервера, ответственный за порядок в текстовых чатах. На уровень ниже модераторов.\n`4.` *Войс модератор* ⏤ модератор сервера, ответственный за порядок в голосовых чатах. На уровень ниже чат модераторов.',
+        'color': 3092790
     }))
     .setButtons([
         new Button()
@@ -84,6 +84,22 @@ const rolesSetup = new Page()
             )
             .setAction(async button => {
                 await button.page.menu.sendPage('voiceModSetup')
+            }),
+        new Button()
+            .setButton(new MessageButton(defaultButton)
+                .setLabel('Локально забаненный')
+                .setID('localBan')
+            )
+            .setAction(async button => {
+                await button.page.menu.sendPage('localBanSetup')
+            }),
+        new Button()
+            .setButton(new MessageButton(defaultButton)
+                .setLabel('Мут')
+                .setID('mute')
+            )
+            .setAction(async button => {
+                await button.page.menu.sendPage('muteSetup')
             })
     ])
     .setPrev(settingsMenu)
@@ -91,9 +107,9 @@ const rolesSetup = new Page()
 const adminSetup = new Page()
     .setName('adminSetup')
     .setEmbed(new MessageEmbed({
-        "title": "Администрация",
-        "description": "Теперь упомяните роль и отправьте сообщение",
-        "color": 3092790
+        'title': 'Администрация',
+        'description': 'Теперь упомяните роль и отправьте сообщение',
+        'color': 3092790
     }))
     .setAction(async page => {
         await saveRoleToSettings(page.menu, 'admin')
@@ -103,9 +119,9 @@ const adminSetup = new Page()
 const moderatorSetup = new Page()
     .setName('moderatorSetup')
     .setEmbed(new MessageEmbed({
-        "title": "Модераторы",
-        "description": "Теперь упомяните роль и отправьте сообщение",
-        "color": 3092790
+        'title': 'Модераторы',
+        'description': 'Теперь упомяните роль и отправьте сообщение',
+        'color': 3092790
     }))
     .setAction(async page => {
         await saveRoleToSettings(page.menu, 'moderator')
@@ -115,9 +131,9 @@ const moderatorSetup = new Page()
 const chatModSetup = new Page()
     .setName('chatModSetup')
     .setEmbed(new MessageEmbed({
-        "title": "Чат модерация",
-        "description": "Теперь упомяните роль и отправьте сообщение",
-        "color": 3092790
+        'title': 'Чат модерация',
+        'description': 'Теперь упомяните роль и отправьте сообщение',
+        'color': 3092790
     }))
     .setAction(async page => {
         await saveRoleToSettings(page.menu, 'chatMod')
@@ -127,30 +143,52 @@ const chatModSetup = new Page()
 const voiceModSetup = new Page()
     .setName('voiceModSetup')
     .setEmbed(new MessageEmbed({
-        "title": "Войс модерация",
-        "description": "Теперь упомяните роль и отправьте сообщение",
-        "color": 3092790
+        'title': 'Войс модерация',
+        'description': 'Теперь упомяните роль и отправьте сообщение',
+        'color': 3092790
     }))
     .setAction(async page => {
         await saveRoleToSettings(page.menu, 'voiceMod')
+    })
+    .setPrev(rolesSetup)
+const localBanSetup = new Page()
+    .setName('localBanSetup')
+    .setEmbed(new MessageEmbed({
+        'title': 'Локально забаненный',
+        'description': 'Теперь упомяните роль и отправьте сообщение',
+        'color': 3092790
+    }))
+    .setAction(async page => {
+        await saveRoleToSettings(page.menu, 'banned')
+    })
+    .setPrev(rolesSetup)
+const muteSetup = new Page()
+    .setName('muteSetup')
+    .setEmbed(new MessageEmbed({
+        'title': 'Мут',
+        'description': 'Теперь упомяните роль и отправьте сообщение',
+        'color': 3092790
+    }))
+    .setAction(async page => {
+        await saveRoleToSettings(page.menu, 'muted')
     })
     .setPrev(rolesSetup)
 
 const roleSetupSuccess = new Page()
     .setName('roleSetupSuccess')
     .setEmbed(new MessageEmbed({
-        "title": "Успешно",
-        "description": "Роль успешно установлена!",
-        "color": 3092790
+        'title': 'Успешно',
+        'description': 'Роль успешно установлена!',
+        'color': 3092790
     }))
     .setPrev(rolesSetup)
 
 const roleSetupFail = new Page()
     .setName('roleSetupFail')
     .setEmbed(new MessageEmbed({
-        "title": "Oшибка!",
-        "description": "Неверно указана роль! Начните настройку заново!",
-        "color": 3092790
+        'title': 'Oшибка!',
+        'description': 'Неверно указана роль! Начните настройку заново!',
+        'color': 3092790
     }))
     .setPrev(rolesSetup)
 
@@ -158,9 +196,9 @@ const roleSetupFail = new Page()
 const channelSetup = new Page()
     .setName('channelSetup')
     .setEmbed(new MessageEmbed({
-        "title": "Настройка каналов",
-        "description": "Для перехода к настройкам каналов, выберете один из них из них ниже\n**Описание каналов:**\n`1.` *Основной* ⏤ основной текстовый канал сервера\n`2.` *Флуд* ⏤ канал, в котором будут писаться команды\n`3.` *Настройка приватных комнат* ⏤ настройка приватных комнат\n",
-        "color": 3092790
+        'title': 'Настройка каналов',
+        'description': 'Для перехода к настройкам каналов, выберете один из них из них ниже\n**Описание каналов:**\n`1.` *Основной* ⏤ основной текстовый канал сервера\n`2.` *Флуд* ⏤ канал, в котором будут писаться команды\n`3.` *Настройка приватных комнат* ⏤ настройка приватных комнат\n',
+        'color': 3092790
     }))
     .setButtons([
         new Button()
@@ -177,7 +215,7 @@ const channelSetup = new Page()
                 .setID('flood')
             )
             .setAction(async button => {
-                await button.page.menu.sendPage('moderatorSetup')
+                await button.page.menu.sendPage('floodSetup')
             }),
         new Button()
             .setButton(new MessageButton(defaultButton)
@@ -194,29 +232,40 @@ const channelSetup = new Page()
 const generalSetup = new Page()
     .setName('generalSetup')
     .setEmbed(new MessageEmbed({
-        "title": "Основной",
-        "description": "Теперь отправьте ID канала",
-        "color": 3092790
+        'title': 'Основной',
+        'description': 'Теперь отправьте ID канала',
+        'color': 3092790
     }))
     .setAction(async page => {
         await saveChannelIDToSettings(page.menu, 'general', 'text')
+    })
+    .setPrev(channelSetup)
+const floodSetup = new Page()
+    .setName('floodSetup')
+    .setEmbed(new MessageEmbed({
+        'title': 'Флуд',
+        'description': 'Теперь отправьте ID канала',
+        'color': 3092790
+    }))
+    .setAction(async page => {
+        await saveChannelIDToSettings(page.menu, 'flood', 'text')
     })
     .setPrev(channelSetup)
 
 const channelSetupSuccess = new Page()
     .setName('channelSetupSuccess')
     .setEmbed(new MessageEmbed({
-        "title": "Успешно",
-        "description": "Канал успешно установлен!",
-        "color": 3092790
+        'title': 'Успешно',
+        'description': 'Канал успешно установлен!',
+        'color': 3092790
     }))
     .setPrev(channelSetup)
 const channelSetupFail = new Page()
     .setName('channelSetupFail')
     .setEmbed(new MessageEmbed({
-        "title": "Oшибка!",
-        "description": "Неверно указан ID! Начните настройку заново!",
-        "color": 3092790
+        'title': 'Oшибка!',
+        'description': 'Неверно указан ID! Начните настройку заново!',
+        'color': 3092790
     }))
     .setPrev(rolesSetup)
 
@@ -224,9 +273,9 @@ const channelSetupFail = new Page()
 const togglables = new Page()
     .setName('togglables')
     .setEmbed(new MessageEmbed({
-        "title": "Настройки функционала",
-        "description": "Здесь Вы можете настроить, какой функционал бота включить или выключить\n**Описание кнопок**\n`1.` *Защита основного канала* ⏤ включает/отключает защиту основного канала от написания команд бота. Сообщения с командами будут удаляться и основного чата.\n",
-        "color": 3092790
+        'title': 'Настройки функционала',
+        'description': 'Здесь Вы можете настроить, какой функционал бота включить или выключить\n**Описание кнопок**\n`1.` *Защита основного канала* ⏤ включает/отключает защиту основного канала от написания команд бота. Сообщения с командами будут удаляться и основного чата.\n',
+        'color': 3092790
     }))
     .setButtons([
         new Toggle()
@@ -269,11 +318,14 @@ const command: BaseCommand = {
                 moderatorSetup,
                 chatModSetup,
                 voiceModSetup,
+                localBanSetup,
+                muteSetup,
                 roleSetupSuccess,
                 roleSetupFail,
 
                 channelSetup,
                 generalSetup,
+                floodSetup,
                 channelSetupSuccess,
                 channelSetupFail,
 
@@ -293,26 +345,26 @@ const command: BaseCommand = {
 export = command
 
 async function saveRoleToSettings(menu: Menu, name: string) {
-    const filter = (messsage: Message) => messsage.author.id === menu.clicker.id;
+    const filter = (messsage: Message) => messsage.author.id === menu.clicker.id
     const message = (await menu.channel.awaitMessages(filter, { time: 60000, max: 1 })).first()
     if (!message) { await menu.sendPage('roleSetupFail'); return }
     const role = message.mentions.roles.first()
     if (!role) { await menu.sendPage('roleSetupFail'); return }
-    const server = await new DBServer(menu.channel.guild.id).fetch();
+    const server = await new DBServer(menu.channel.guild.id).fetch()
     server.data.settings.roles[name] = role.id
     await server.save()
     await updateCache(menu.guild.id)
     await menu.sendPage('roleSetupSuccess')
 }
 async function saveChannelIDToSettings(menu: Menu, name: string, type: 'text' | 'category' | 'voice') {
-    const filter = (messsage: Message) => messsage.author.id === menu.clicker.id;
+    const filter = (messsage: Message) => messsage.author.id === menu.clicker.id
     const id = (await menu.channel.awaitMessages(filter, { time: 60000, max: 1 })).first().content
     const channel = menu.channel.guild.channels.cache.get(id)
     if (!id || !channel || channel.type != type) {
         await menu.sendPage('channelSetupFail')
         return
     }
-    const server = await new DBServer(menu.channel.guild.id).fetch();
+    const server = await new DBServer(menu.channel.guild.id).fetch()
     server.data.settings.channels[name] = id
     await server.save()
     await updateCache(menu.guild.id)
