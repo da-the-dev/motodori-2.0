@@ -1,5 +1,4 @@
-import { MessageButton, MessageComponent } from 'discord-buttons'
-import Menu from './Menu'
+import { MessageButton } from 'discord-buttons'
 import Page from './Page'
 
 export default class Button {

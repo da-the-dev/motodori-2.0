@@ -1,7 +1,6 @@
 import { BaseCommand } from '../../headers/interfaces'
 import { embed, roleCheck } from '../../headers/utility'
 import { DBUser } from '../../headers/classes'
-import { cachedServers } from '../../headers/globals'
 
 const sMsg = 'Выдача валюты'
 /** @example Usage: `.give @member <amount>` */
