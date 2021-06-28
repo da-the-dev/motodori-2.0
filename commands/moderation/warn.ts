@@ -25,7 +25,6 @@ const command: BaseCommand = {
         }
 
         const user = await new DBUser(msg.guild.id, mMember.id).fetch()
-        logger.debug(user.data.warns.length)
 
         if (user.data.warns && user.data.warns.length >= 2) {
             logger.debug('mutting...')
@@ -39,7 +38,6 @@ const command: BaseCommand = {
         }
 
         user.data.warns.push({ 'reason': reason, 'who': msg.author.id, 'time': msg.createdTimestamp })
-        logger.debug(user.data)
         user.save()
 
         embed(msg, sMsg, `Пользователю <@${mMember.user.id}> выдано предупреждение \n\`\`\`Elm\nПричина: ${reason}\n\`\`\``)
