@@ -5,6 +5,40 @@ The format is based on [Keep a Changelog][Keep a Changelog] and this project adh
 
 ## [Latest]
 ---
+## [0.3.3] - 2021-06-28 ⏤ Moderation commands
+### Added
+- Added `.eslintrc.json` for ESLint support
+- Added `jsconfing.json`
+- Added `package.json` to `.gitignore` to not rase conflicts on other systems when downloading the repository
+- Added *"Close"* button to all pages in `Menu.ts`
+- Added packages `handy-redis` and `redis` to support redis
+- Added `RedCon.ts` to support redis connections
+- Added `RedisHandler` to handle redis expire events
+- Added `settingsChecks.ts` which contains functions `setRoleCheck()` and `setChannelCheck` that check if a settings is set in the server's settings or not
+- Added *"motodori"* flag to `BaseCommand.ts`'s `Flag` type that makes commands to be exclusive to **motodori** server. It is used in `toxic.ts`, `untoxic.ts`, `selfie.ts` and `unselfie.ts`
+- Imported `time.js` from the old version
+- Added moderation commands such as `ban.ts`, `unban.ts`, `warn.ts`, `unwarn.ts`, `warns.ts`, `clear.ts`, `mute.ts`, `unmute.ts`, `toxic.ts`, `untoxic.ts`, `selfie.ts` and `unselfie.ts`
+- Added `br.ts` which is a sort of casino
+- Added `roleCheck` to `give.ts`
+- Added `timely.ts` for dayly rewards
+- Added new settings roles `muted` and `banned` in `Settings.ts`
+- Added 2 more buttons for settings roles `muted` and `banned` in `settings.ts`
+- Updated headers and imports across many files
+
+### Changed
+- Changed a lot of stuff in many files to improve consistency and to satisfy ESLint
+- Changed `Connection.ts` methods to not use asyncronous promises, instead it now uses `async/await`
+- Changed `DBServer.ts` methods to not use asyncronous promises, instead it now uses `async/await`
+- Changed `DBUser.ts` methods to not use asyncronous promises, instead it now uses `async/await`
+- Changed `saveRoleToSettings()` and `saveChannelIDToSettings()` in `settings.ts` to throw and catch errors for easier menu managment
+- Changed `User` and `Server` interfaces in `DBInterfaces.ts` to use required properties instead of optional
+- Changed `roleCheck` in `roles.ts` to be more verbose
+
+### Deprecated
+- Depracated `clone()` in `Menu.ts` because it isn't used anymore
+- Depricated `put.js`
+
+---
 ## [0.3.2] - 2021-06-26
 
 ### Added
@@ -51,7 +85,8 @@ The format is based on [Keep a Changelog][Keep a Changelog] and this project adh
 - Changed `serverSetup.ts` setup function to suite latest update.
 
 ### Deprecated
-- Added and depecated `put.js`'s function.
+- Depecated `put.js`'s function.
+- Deprecated `clearButtons` `sendEmbed` and `delete` in `Menu.ts`
 
 ### Removed
 - Removed line 5 from `logger.ts`.
@@ -147,7 +182,9 @@ The format is based on [Keep a Changelog][Keep a Changelog] and this project adh
 [Semantic Versioning]: https://semver.org/
 
 <!-- Versions -->
-[Latest]: https://github.com/da-the-dev/motodori-2.0/compare/v0.3.1..HEAD
+[Latest]: https://github.com/da-the-dev/motodori-2.0/compare/v0.3.3..HEAD
+[0.3.3]: https://github.com/da-the-dev/motodori-2.0/compare/v0.3.2..v0.3.3
+[0.3.2]: https://github.com/da-the-dev/motodori-2.0/compare/v0.3.1..v0.3.2
 [0.3.1]: https://github.com/da-the-dev/motodori-2.0/compare/v0.3.0..v0.3.1
 [0.3.0]: https://github.com/da-the-dev/motodori-2.0/compare/v0.2.1..v0.3.0
 [0.2.1]: https://github.com/da-the-dev/motodori-2.0/compare/v0.2.0..v0.2.1
