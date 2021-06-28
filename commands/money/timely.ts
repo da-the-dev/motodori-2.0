@@ -1,8 +1,8 @@
 import { BaseCommand } from '../../headers/interfaces'
 import { embed, timeCalculator } from '../../headers/utility'
 import { DBUser } from '../../headers/classes'
-const sMsg = 'Временные награды'
 
+const sMsg = 'Временные награды'
 /** @example Usage: `.timely` */
 const command: BaseCommand = {
     foo: async (msg, args, client) => {

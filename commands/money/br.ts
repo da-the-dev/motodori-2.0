@@ -1,8 +1,8 @@
 import { BaseCommand } from '../../headers/interfaces'
 import { embed } from '../../headers/utility'
 import { DBUser } from '../../headers/classes'
-const sMsg = 'Казино'
 
+const sMsg = 'Казино'
 /** @example Usage: `.br <bet >= 50>` */
 const command: BaseCommand = {
     foo: async (msg, args, client) => {

@@ -4,8 +4,7 @@ import { BaseCommand } from '../../headers/interfaces'
 import { roleCheck, embed, setRoleCheck } from '../../headers/utility'
 
 const sMsg = 'Мут'
-
-/** @example Usage: `.unmute member` */
+/** @example Usage: `.unmute @member` */
 const command: BaseCommand = {
     foo: async (msg, args, client) => {
         if (!roleCheck(msg, sMsg, 'voiceMod'))

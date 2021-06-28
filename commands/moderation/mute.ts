@@ -5,8 +5,7 @@ import { roleCheck, embed, setRoleCheck, setChannelCheck } from '../../headers/u
 import { duration } from 'moment'
 
 const sMsg = 'Мут'
-
-/** @example Usage: `.mute member duration reason` */
+/** @example Usage: `.mute @member duration reason` */
 const command: BaseCommand = {
     foo: async (msg, args, client) => {
         if (!roleCheck(msg, sMsg, 'voiceMod'))

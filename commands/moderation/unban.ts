@@ -2,8 +2,8 @@ import { DBUser } from '../../headers/classes'
 import { cachedServers } from '../../headers/globals'
 import { BaseCommand } from '../../headers/interfaces'
 import { roleCheck, embed, setRoleCheck } from '../../headers/utility'
-const sMsg = 'Локальная блокировка'
 
+const sMsg = 'Локальная блокировка'
 /** @example Usage: `.unban @member` */
 const command: BaseCommand = {
     foo: async (msg, args, client) => {

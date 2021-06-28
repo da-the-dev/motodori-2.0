@@ -2,9 +2,9 @@ import { DBUser, RedCon } from '../../headers/classes'
 import { cachedServers } from '../../headers/globals'
 import { BaseCommand } from '../../headers/interfaces'
 import { roleCheck, embed, logger } from '../../headers/utility'
-const sMsg = 'Локальная блокировка'
 
-/** @example Usage: `.warn @member warn message` */
+const sMsg = 'Локальная блокировка'
+/** @example Usage: `.warn @member <warn message>` */
 const command: BaseCommand = {
     foo: async (msg, args, client) => {
         if (!roleCheck(msg, sMsg, 'voiceMod'))
