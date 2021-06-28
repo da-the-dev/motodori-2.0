@@ -1,10 +1,11 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { MessageButton, ExtendedMessage, ExtendedMessageOptions, MessageComponent, MessageActionRow } from 'discord-buttons'
 import { Guild, MessageEmbed, TextChannel, User } from 'discord.js'
+import Page, { AnyButton } from './Page'
 import Button from './Button'
 import Toggle from './Toggle'
-import Page, { AnyButton } from './Page'
-import { logger } from '../utility/logger'
 import OneWay from './OneWay'
+import { logger } from '../utility/logger'
 class TimeoutError extends Error {
     constructor(message?, name?) {
         super(message)
@@ -12,6 +13,7 @@ class TimeoutError extends Error {
     }
 }
 
+/** @deprecated Use for passing objects by value */
 function clone(obj) {
     if (obj == null || typeof (obj) != 'object')
         return obj
@@ -144,7 +146,10 @@ export default class Menu {
         const rows = page.buttons ? arrayChunk(page.buttons, 5).map(ch => new MessageActionRow().addComponents(ch.map((b: AnyButton) => b.button))) : []
 
         // this.currentMessage = await this.currentMessage.edit({ embed: page.embed, buttons: page.buttons && page.buttons.map(b => b.button).length > 0 ? page.buttons.map(b => b.button) : null } as ExtendedMessageOptions) as ExtendedMessage
-        this.currentMessage = await this.currentMessage.edit({ embed: page.embed, components: rows } as ExtendedMessageOptions) as ExtendedMessage
+        if (this.currentMessage)
+            this.currentMessage = await this.currentMessage.edit({ embed: page.embed, components: rows } as ExtendedMessageOptions) as ExtendedMessage
+        else
+            return null
 
         if (page.action) page.action(page)
         this.addListener(page)
