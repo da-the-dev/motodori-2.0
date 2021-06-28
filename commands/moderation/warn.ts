@@ -26,13 +26,11 @@ const command: BaseCommand = {
 
         const user = await new DBUser(msg.guild.id, mMember.id).fetch()
         logger.debug(user.data.warns.length)
-        logger.debug(user.data)
 
         if (user.data.warns && user.data.warns.length >= 2) {
             logger.debug('mutting...')
             await RedCon.getConnection().client.set(`mute-${msg.guild.id}-${mMember.id}`, '')
             await RedCon.getConnection().client.expire(`mute-${msg.guild.id}-${mMember.id}`, 3 * 24 * 60 * 60)
-            const user = await new DBUser(mMember.guild.id, mMember.id).fetch()
 
             user.data.mute = true
             user.data.warns = []
