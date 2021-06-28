@@ -1,7 +1,7 @@
 import { DBUser, RedCon } from '../../headers/classes'
 import { cachedServers } from '../../headers/globals'
 import { BaseCommand } from '../../headers/interfaces'
-import { roleCheck, embed, setRoleCheck } from '../../headers/utility'
+import { roleCheck, embed, setRoleCheck, setChannelCheck } from '../../headers/utility'
 import { duration } from 'moment'
 
 const sMsg = 'Мут'
@@ -12,6 +12,8 @@ const command: BaseCommand = {
         if (!roleCheck(msg, sMsg, 'voiceMod'))
             return
         if (!setRoleCheck(msg, sMsg, msg.guild.id, 'muted'))
+            return
+        if (!setChannelCheck(msg, sMsg, msg.guild.id, 'flood'))
             return
 
         try {
