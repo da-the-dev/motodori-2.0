@@ -17,10 +17,10 @@
         "@typescript-eslint"
     ],
     "rules": {
-        "linebreak-style": [
-            "error",
-            "unix"
-        ],
+        // "linebreak-style": [
+        //     "error",
+        //     "unix"
+        // ],
         "quotes": [
             "warn",
             "single",
