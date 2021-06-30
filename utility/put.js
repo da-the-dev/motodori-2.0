@@ -4,6 +4,7 @@
 /**
  * Add items to an object at a specific path
  * (c) 2021 Chris Ferdinandi, MIT License, https://gomakethings.com
+ * @deprecated This function is not used anymore anywhere and should be avoided
  * @param  {Object}       obj  The object
  * @param  {String|Array} path The path to assign the value to
  * @param  {*}            val  The value to assign

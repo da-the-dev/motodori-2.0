@@ -345,29 +345,44 @@ const command: BaseCommand = {
 export = command
 
 async function saveRoleToSettings(menu: Menu, name: string) {
-    const filter = (messsage: Message) => messsage.author.id === menu.clicker.id
-    const message = (await menu.channel.awaitMessages(filter, { time: 60000, max: 1 })).first()
-    if (!message) { await menu.sendPage('roleSetupFail'); return }
-    const role = message.mentions.roles.first()
-    if (!role) { await menu.sendPage('roleSetupFail'); return }
-    const server = await new DBServer(menu.channel.guild.id).fetch()
-    server.data.settings.roles[name] = role.id
-    await server.save()
-    await updateCache(menu.guild.id)
-    await menu.sendPage('roleSetupSuccess')
+    try {
+        const filter = (messsage: Message) => messsage.author.id === menu.clicker.id
+        const message = (await menu.channel.awaitMessages(filter, { time: 60000, max: 1 })).first()
+        if (!message) throw 'no message'
+        const role = message.mentions.roles.first()
+        if (!role) throw 'no role'
+        const server = await new DBServer(menu.channel.guild.id).fetch()
+        server.data.settings.roles[name] = role.id
+        await server.save()
+        await updateCache(menu.guild.id)
+        await menu.sendPage('roleSetupSuccess')
+    } catch (err) {
+        if (['no message', 'no role'].includes(err))
+            await menu.sendPage('roleSetupFail')
+        else
+            throw err
+    }
 }
 async function saveChannelIDToSettings(menu: Menu, name: string, type: 'text' | 'category' | 'voice') {
-    const filter = (messsage: Message) => messsage.author.id === menu.clicker.id
-    const id = (await menu.channel.awaitMessages(filter, { time: 60000, max: 1 })).first().content
-    const channel = menu.channel.guild.channels.cache.get(id)
-    if (!id || !channel || channel.type != type) {
-        await menu.sendPage('channelSetupFail')
-        return
+    try {
+        const filter = (messsage: Message) => messsage.author.id === menu.clicker.id
+        const message = (await menu.channel.awaitMessages(filter, { time: 60000, max: 1 })).first()
+        if (!message) throw 'no message'
+        const id = message.content
+        if (!id) throw 'no id'
+        const channel = menu.channel.guild.channels.cache.get(id)
+        if (!channel || channel.type != type) throw 'no channel'
+
+        const server = await new DBServer(menu.channel.guild.id).fetch()
+        server.data.settings.channels[name] = id
+        await server.save()
+        await updateCache(menu.guild.id)
+        await menu.sendPage('channelSetupSuccess')
+    } catch (err) {
+        if (['no message', 'no id', 'no channel', 'no channel'].includes(err))
+            await menu.sendPage('channelSetupFail')
+        else
+            throw err
     }
-    const server = await new DBServer(menu.channel.guild.id).fetch()
-    server.data.settings.channels[name] = id
-    await server.save()
-    await updateCache(menu.guild.id)
-    await menu.sendPage('channelSetupSuccess')
 }
 

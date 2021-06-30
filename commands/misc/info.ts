@@ -1,4 +1,4 @@
-import { Client, MessageEmbed } from 'discord.js'
+import { Client } from 'discord.js'
 import { BaseCommand } from '../../headers/interfaces'
 import { embed } from '../../headers/utility'
 
@@ -17,7 +17,7 @@ const sMsg = 'Информация о боте'
 const command: BaseCommand = {
     foo: (msg, args, client) => {
         const memoryUsed = process.memoryUsage().heapUsed / 1024 / 1024
-        const emb = embed(msg, sMsg, null, null, null) as MessageEmbed
+        const emb = embed(msg, sMsg, null, false, false)
         emb
             .setThumbnail(client.user.displayAvatarURL({ dynamic: true }))
             .addField('Автор бота', `\`\`\`${client.users.cache.find(u => u.id == process.env.MYID).tag}\`\`\``, true)

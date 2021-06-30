@@ -1,4 +1,3 @@
-import { MessageEmbed } from 'discord.js'
 import { BaseCommand } from '../../headers/interfaces'
 import { embed } from '../../headers/utility'
 
@@ -7,7 +6,7 @@ const sMsg = 'Просмотр аватара'
 const command: BaseCommand = {
     foo: (msg, args, client) => {
         const mMember = msg.mentions.members.first() || msg.member
-        const emb = embed(msg, sMsg, `<@${mMember.id}>`, false, false) as MessageEmbed
+        const emb = embed(msg, sMsg, `<@${mMember.id}>`, false, false)
         emb
             .setThumbnail('')
             .setImage(mMember.user.displayAvatarURL({ dynamic: true }) + '?size=2048')

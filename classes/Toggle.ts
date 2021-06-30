@@ -1,7 +1,7 @@
-import { MessageButton, MessageComponent } from 'discord-buttons'
-import { logger } from '../utility/logger'
-import Menu from './Menu'
+import { MessageButton } from 'discord-buttons'
 import Page from './Page'
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { logger } from '../utility/logger'
 
 export default class Toggle {
     button: MessageButton

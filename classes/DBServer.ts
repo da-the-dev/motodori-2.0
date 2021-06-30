@@ -1,4 +1,4 @@
-import { Server, Settings, nullSettings } from '../headers/interfaces'
+import { Server, nullSettings } from '../headers/interfaces'
 import { Connection } from './Connection'
 import { mergeWith } from 'lodash'
 

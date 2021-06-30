@@ -1,8 +1,8 @@
 import { BaseCommand } from '../../headers/interfaces'
 import { embed } from '../../headers/utility'
 import { DBUser } from '../../headers/classes'
-const sMsg = 'Казино'
 
+const sMsg = 'Казино'
 /** @example Usage: `.br <bet >= 50>` */
 const command: BaseCommand = {
     foo: async (msg, args, client) => {
@@ -42,7 +42,7 @@ const command: BaseCommand = {
         embed(msg, sMsg + ': помощь', `
         Пример работы команды:
         \`.br 100 - сыграть в казино на 100 валюты\`
-        \`Ставка должна быть ***больше 50***\`
+        \`Ставка должна быть больше 50\`
         `)
     },
     description: 'Сыграть в казино',
