@@ -23,7 +23,7 @@ export class DBServer {
         this.data.roles = serverData.roles || []
         this.data.customRoles = serverData.customRoles || []
         this.data.personalRooms = serverData.personalRooms || []
-        this.data.settings = mergeWith(serverData.settings, nullSettings, (objValue, srcValue) => {
+        this.data.settings = mergeWith(serverData.settings, nullSettings(), (objValue, srcValue) => {
             if (srcValue === null) return objValue
         })
 
