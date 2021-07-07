@@ -1,4 +1,4 @@
-import { MessageButton } from 'discord-buttons'
+import { MessageButton, MessageButtonOptions } from 'discord-buttons'
 import { BaseCommand } from '../../headers/interfaces'
 import { DBServer, Menu, Button, Toggle, Page } from '../../headers/classes'
 import { embed, logger } from '../../headers/utility'
@@ -7,7 +7,7 @@ import { updateCache } from '../../headers/globals'
 
 const defaultButton = {
     style: 'gray'
-}
+} as MessageButtonOptions
 // *Pages*
 // Main page
 const settingsMenu = new Page()

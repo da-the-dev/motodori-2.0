@@ -2,11 +2,9 @@ import Menu from './Menu'
 import Button from './Button'
 export default class OneWay extends Button {
     state: boolean
-    inited = false
-    init: (button: OneWay) => Promise<void>
     constructor() { super() }
 
-    setAction(action: (button: Button) => void): OneWay {
+    setAction(action: (button: this) => void): this {
         const toggle = async (menu: Menu) => {
             const page = menu.pages.find(p => p.buttons && p.buttons.find(b => b.button.custom_id == this.button.custom_id))
             page.buttons.find(b => b.button.custom_id == this.button.custom_id).button.setDisabled(true)
@@ -19,18 +17,12 @@ export default class OneWay extends Button {
         return this
     }
 
-    setInit(initFoo: (button: OneWay) => Promise<void>): OneWay {
-        this.init = initFoo
-        return this
-    }
-
-    setState(state: boolean): OneWay {
+    setState(state: boolean): this {
         this.state = state
         if (this.state == true)
             this.button.setDisabled(false)
         else
             this.button.setDisabled(true)
-        this.inited = true
         return this
     }
 }

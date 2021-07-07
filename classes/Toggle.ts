@@ -1,19 +1,14 @@
-import { MessageButton } from 'discord-buttons'
-import Page from './Page'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { logger } from '../utility/logger'
+import BaseButton from './BaseButton'
 
-export default class Toggle {
-    button: MessageButton
+export default class Toggle extends BaseButton {
+    private isOn: (button: this) => void
+    private isOff: (button: this) => void
     state = true
-    page: Page
-    inited = false
-    action: (button: Toggle) => void
-    private on: (button: Toggle) => void
-    private off: (button: Toggle) => void
-    init: (button: Toggle) => Promise<void>
 
     constructor() {
+        super()
         this.action = () => { }
     }
 
@@ -28,49 +23,39 @@ export default class Toggle {
         await this.page.menu.sendPage(page.name)
     }
 
-    setButton(button: MessageButton): Toggle {
-        this.button = button
-        return this
-    }
-
-    setOn(action: (button: Toggle) => void): Toggle {
-        this.on = (button: Toggle) => {
+    setOn(action: (button: this) => void): this {
+        this.isOn = (button: this) => {
             action.call(this, this)
             this.showON.call(this)
             this.state = !this.state
-            this.action = this.off
+            this.action = this.isOff
             return false
         }
         return this
     }
 
-    setOff(action: (button: Toggle) => void): Toggle {
-        this.off = (button: Toggle) => {
+    setOff(action: (button: this) => void): this {
+        this.isOff = (button: this) => {
             action.call(this, this)
             this.showOFF.call(this)
             this.state = !this.state
-            this.action = this.on
+            this.action = this.isOn
             return false
         }
         return this
     }
 
-    setState(state: boolean): void {
+    setState(state: boolean): this {
         switch (state) {
             case true:
                 this.button.setStyle(3)
-                this.action = this.off
+                this.action = this.isOff
                 break
             case false:
                 this.button.setStyle(4)
-                this.action = this.on
+                this.action = this.isOn
                 break
         }
-        this.inited = true
-    }
-
-    setInit(initFoo: (button: Toggle) => Promise<void>): Toggle {
-        this.init = initFoo
         return this
     }
 }
