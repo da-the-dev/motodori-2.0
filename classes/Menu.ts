@@ -4,7 +4,7 @@ import { Guild, Message, MessageEmbed, TextChannel, User } from 'discord.js'
 import Page from './Page'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { logger } from '../utility/logger'
-import { Button } from '../headers/classes'
+import { Button, Toggle } from '../headers/classes'
 
 
 /** @deprecated Use for passing objects by value */
@@ -35,6 +35,7 @@ function arrayChunk(array: any[], chunkSize: number): any[][] {
 
 export default class Menu {
     pages: Page[] = []
+    lastPageName: string
     currentMessage: Message
     clicker: User
     guild: Guild
@@ -125,9 +126,11 @@ export default class Menu {
     async send(): Promise<Menu> {
         this.verifyMenu()
         const page = this.pages[0]
+        if (page.buttons) await Promise.all(page.buttons.map(b => b.init(b)))
         this.currentMessage = await this.channel.send({ embed: page.embed, buttons: page.buttons.map(b => b.button) || null })
         this.addListener(page)
 
+        this.lastPageName = page.name
         return this
     }
 
@@ -135,7 +138,12 @@ export default class Menu {
     async sendPage(name: string): Promise<Message> {
         const page = this.pages.find(p => p.name == name)
         if (!page) throw new ReferenceError('No page found!')
-        if (page.buttons) await Promise.all(page.buttons.map(b => b.init(b)))
+
+        if (page.buttons) {
+            await Promise.all(page.buttons.filter(b => !(b instanceof Toggle)).map(b => b.init(b)))
+            if (page.name !== page.menu.lastPageName)
+                await Promise.all(page.buttons.filter(b => b instanceof Toggle).map(b => b.init(b)))
+        }
         // if (page.buttons) await Promise.all((page.buttons.filter(b => b instanceof OneWay && b.inited == false) as OneWay[]).map(b => b.init(b)))
 
         // const rows = page.buttons ? arrayChunk(page.buttons.map(b => b.button).flat(), 5).flat() as MessageActionRow[] : []
@@ -149,7 +157,7 @@ export default class Menu {
 
         if (page.action) page.action(page)
         this.addListener(page)
-
+        this.lastPageName = name
         return this.currentMessage
     }
 
@@ -177,7 +185,7 @@ export default class Menu {
     /** Adds a listener for buttons */
     async addListener(page: Page): Promise<void> {
         const filter = (button: MessageComponent) => button.clicker.user.id === this.clicker.id
-        const collector = this.currentMessage.createButtonCollector(filter, { max: 1, time: 10000 })
+        const collector = this.currentMessage.createButtonCollector(filter, { max: 1, time: 60000 })
         collector.on('end', async (collected, reason) => {
             try {
                 const button = collected.first()

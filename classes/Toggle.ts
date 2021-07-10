@@ -13,20 +13,22 @@ export default class Toggle extends BaseButton {
     }
 
     private showON = async () => {
-        const page = this.page.menu.pages.find(p => p.buttons && p.buttons.find(b => b.button.custom_id == this.button.custom_id))
-        page.buttons.find(b => b.button.custom_id == this.button.custom_id).button.setStyle(3)
-        await this.page.menu.sendPage(page.name)
+        this.button.setStyle('green')
+        // const page = this.page.menu.pages.find(p => p.buttons && p.buttons.find(b => b.button.custom_id == this.button.custom_id))
+        // page.buttons.find(b => b.button.custom_id == this.button.custom_id).button.setStyle(3)
+        await this.page.menu.sendPage(this.page.name)
     }
     private showOFF = async () => {
-        const page = this.page.menu.pages.find(p => p.buttons && p.buttons.find(b => b.button.custom_id == this.button.custom_id))
-        page.buttons.find(b => b.button.custom_id == this.button.custom_id).button.setStyle(4)
-        await this.page.menu.sendPage(page.name)
+        this.button.setStyle('red')
+        // const page = this.page.menu.pages.find(p => p.buttons && p.buttons.find(b => b.button.custom_id == this.button.custom_id))
+        // page.buttons.find(b => b.button.custom_id == this.button.custom_id).button.setStyle(4)
+        await this.page.menu.sendPage(this.page.name)
     }
 
     setOn(action: (button: this) => void): this {
         this.isOn = (button: this) => {
-            action.call(this, this)
-            this.showON.call(this)
+            action.call(null, this)
+            this.showON.call(null)
             this.state = !this.state
             this.action = this.isOff
             return false
@@ -36,8 +38,8 @@ export default class Toggle extends BaseButton {
 
     setOff(action: (button: this) => void): this {
         this.isOff = (button: this) => {
-            action.call(this, this)
-            this.showOFF.call(this)
+            action.call(null, this)
+            this.showOFF.call(null)
             this.state = !this.state
             this.action = this.isOn
             return false
