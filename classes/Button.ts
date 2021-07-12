@@ -1,18 +1,8 @@
-import { MessageButton } from 'discord-buttons'
-import Page from './Page'
+import BaseButton from '../classes/BaseButton'
 
-export default class Button {
-    page: Page
-    button: MessageButton
-    action: (button: Button) => void
-
-    setButton(button: MessageButton): Button {
-        this.button = button
-        return this
-    }
-    setAction(action: (button: Button) => void): Button {
+export default class Button extends BaseButton {
+    setAction(action: (button: this) => void): this {
         this.action = action
         return this
     }
 }
-

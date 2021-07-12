@@ -1,17 +1,11 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { MessageButton, ExtendedMessage, ExtendedMessageOptions, MessageComponent, MessageActionRow } from 'discord-buttons'
-import { Guild, MessageEmbed, TextChannel, User } from 'discord.js'
-import Page, { AnyButton } from './Page'
-import Button from './Button'
-import Toggle from './Toggle'
-import OneWay from './OneWay'
+import { MessageActionRow, MessageButton, MessageComponent } from 'discord-buttons'
+import { Guild, Message, MessageEmbed, TextChannel, User } from 'discord.js'
+
+import Page from './Page'
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { logger } from '../utility/logger'
-class TimeoutError extends Error {
-    constructor(message?, name?) {
-        super(message)
-        name ? this.name = name : null
-    }
-}
+import { Button, Toggle } from '../headers/classes'
+
 
 /** @deprecated Use for passing objects by value */
 function clone(obj) {
@@ -20,6 +14,7 @@ function clone(obj) {
 
     const temp = new obj.constructor()
     for (const key in obj)
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         temp[key] = clone(obj[key])
 
     return temp
@@ -40,7 +35,8 @@ function arrayChunk(array: any[], chunkSize: number): any[][] {
 
 export default class Menu {
     pages: Page[] = []
-    currentMessage: ExtendedMessage
+    lastPageName: string
+    currentMessage: Message
     clicker: User
     guild: Guild
     channel: TextChannel
@@ -130,43 +126,51 @@ export default class Menu {
     async send(): Promise<Menu> {
         this.verifyMenu()
         const page = this.pages[0]
-        this.currentMessage = await this.channel.send({ embed: page.embed, buttons: page.buttons.map(b => b.button) || null } as ExtendedMessageOptions) as ExtendedMessage
+        if (page.buttons) await Promise.all(page.buttons.map(b => b.init(b)))
+        this.currentMessage = await this.channel.send({ embed: page.embed, buttons: page.buttons.map(b => b.button) || null })
         this.addListener(page)
 
+        this.lastPageName = page.name
         return this
     }
 
     /** Sends the page with name `name` */
-    async sendPage(name: string): Promise<ExtendedMessage> {
+    async sendPage(name: string): Promise<Message> {
         const page = this.pages.find(p => p.name == name)
         if (!page) throw new ReferenceError('No page found!')
-        if (page.buttons) await Promise.all((page.buttons.filter(b => b instanceof Toggle && b.inited == false) as Toggle[]).map(b => b.init(b)))
-        if (page.buttons) await Promise.all((page.buttons.filter(b => b instanceof OneWay && b.inited == false) as OneWay[]).map(b => b.init(b)))
 
-        const rows = page.buttons ? arrayChunk(page.buttons, 5).map(ch => new MessageActionRow().addComponents(ch.map((b: AnyButton) => b.button))) : []
+        if (page.buttons) {
+            await Promise.all(page.buttons.filter(b => !(b instanceof Toggle)).map(b => b.init(b)))
+            if (page.name !== page.menu.lastPageName)
+                await Promise.all(page.buttons.filter(b => b instanceof Toggle).map(b => b.init(b)))
+        }
+        // if (page.buttons) await Promise.all((page.buttons.filter(b => b instanceof OneWay && b.inited == false) as OneWay[]).map(b => b.init(b)))
+
+        // const rows = page.buttons ? arrayChunk(page.buttons.map(b => b.button).flat(), 5).flat() as MessageActionRow[] : []
+        const rows = page.buttons ? arrayChunk(page.buttons.map(b => b.button), 5).map(ch => new MessageActionRow().addComponents(...ch)) : []
 
         // this.currentMessage = await this.currentMessage.edit({ embed: page.embed, buttons: page.buttons && page.buttons.map(b => b.button).length > 0 ? page.buttons.map(b => b.button) : null } as ExtendedMessageOptions) as ExtendedMessage
         if (this.currentMessage)
-            this.currentMessage = await this.currentMessage.edit({ embed: page.embed, components: rows } as ExtendedMessageOptions) as ExtendedMessage
+            this.currentMessage = await this.currentMessage.edit({ embed: page.embed, components: rows })
         else
             return null
 
         if (page.action) page.action(page)
         this.addListener(page)
-
+        this.lastPageName = name
         return this.currentMessage
     }
 
     /**@deprecated This method should not be used */
-    async clearButtons(): Promise<ExtendedMessage> {
-        this.currentMessage = await this.currentMessage.edit({ embed: this.currentMessage.embeds[0], buttons: null } as ExtendedMessageOptions) as ExtendedMessage
+    async clearButtons(): Promise<Message> {
+        this.currentMessage = await this.currentMessage.edit({ embed: this.currentMessage.embeds[0] }, null)
         return this.currentMessage
     }
 
     /**@deprecated This method should not be used */
-    async sendEmbed(emb: MessageEmbed): Promise<ExtendedMessage> {
+    async sendEmbed(emb: MessageEmbed): Promise<Message> {
         await this.clearButtons()
-        this.currentMessage = await this.currentMessage.edit({ embed: emb }) as ExtendedMessage
+        this.currentMessage = await this.currentMessage.edit({ embed: emb })
         return this.currentMessage
     }
 
@@ -181,21 +185,19 @@ export default class Menu {
     /** Adds a listener for buttons */
     async addListener(page: Page): Promise<void> {
         const filter = (button: MessageComponent) => button.clicker.user.id === this.clicker.id
-        const collector = this.currentMessage.createButtonCollector(filter, { max: 1, time: 10000 })
+        const collector = this.currentMessage.createButtonCollector(filter, { max: 1, time: 60000 })
         collector.on('end', async (collected, reason) => {
             try {
                 const button = collected.first()
-                button ? button.defer() : (() => { throw new TimeoutError() })()
+                button ? await button.reply.defer(false) : (() => { throw 'timeout' })()
                 const actButton = page.buttons.find(b => b.button.custom_id == button.id)
-
-                actButton.action(actButton as Toggle & Button)
+                await actButton.action(actButton)
             } catch (error) {
-                if (error instanceof TimeoutError)
-                    if (this.currentMessage.deletable)
-                        this.currentMessage.delete()
-                            .catch(() => {
-                                // do nothing.
-                            })
+                if (error === 'timeout')
+                    this.currentMessage.delete()
+                else
+                    throw error
+
             }
         })
     }

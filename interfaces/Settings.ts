@@ -1,5 +1,5 @@
 export type SettingsRole = 'admin' | 'moderator' | 'chatMod' | 'voiceMod' | 'banned' | 'muted'
-export type SettingsChannel = 'general' | 'flood'
+export type SettingsChannel = 'general' | 'flood' | 'privateRoomCategory'
 export interface Settings {
     roles: {
         admin: string,
@@ -12,34 +12,30 @@ export interface Settings {
     channels: {
         general: string,
         flood: string,
-        privateRooms: {
-            category: string,
-            creatorID: string
-        }
+        privateRoomsCategory: string
     },
     togglables: {
         generalProtection: boolean
     }
 }
 
-export const nullSettings: Settings = {
-    roles: {
-        admin: null,
-        moderator: null,
-        chatMod: null,
-        voiceMod: null,
-        banned: null,
-        muted: null
-    },
-    channels: {
-        general: null,
-        flood: null,
-        privateRooms: {
-            category: null,
-            creatorID: null
+export const nullSettings = (): Settings => {
+    return {
+        roles: {
+            admin: null,
+            moderator: null,
+            chatMod: null,
+            voiceMod: null,
+            banned: null,
+            muted: null
+        },
+        channels: {
+            general: null,
+            flood: null,
+            privateRoomsCategory: null
+        },
+        togglables: {
+            generalProtection: undefined
         }
-    },
-    togglables: {
-        generalProtection: undefined
     }
 }

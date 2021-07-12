@@ -1,18 +1,16 @@
 import { MessageEmbed } from 'discord.js'
-import Button from './Button'
 import Menu from './Menu'
-import OneWay from './OneWay'
-import Toggle from './Toggle'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { logger } from '../utility/logger'
+import BaseButton from './BaseButton'
 
-export type AnyButton = Button | Toggle | OneWay
+// export type AnyButton = Button | Toggle | OneWay
 
 export default class Page {
     name: string
     embed: MessageEmbed
     menu: Menu
-    buttons?: AnyButton[]
+    buttons?: BaseButton[]
     prev?: Page
     action?: (page: Page) => void
     setup?: boolean
@@ -25,7 +23,7 @@ export default class Page {
         this.embed = embed
         return this
     }
-    setButtons(buttons: AnyButton[]): Page {
+    setButtons(buttons: BaseButton[]): Page {
         this.buttons = buttons
         return this
     }
