@@ -69,12 +69,12 @@ client.on('guildCreate', async guild => {
 
 // Once the bot recieves a message
 client.on('message', async msg => {
-    if (msg.author.id === '315339158912761856' && msg.content.startsWith(prefix) && !msg.author.bot) {
-        // if (msg.content.startsWith(prefix) && !msg.author.bot) {
+    // if (msg.author.id === '315339158912761856' && msg.content.startsWith(prefix) && !msg.author.bot) {
+    if (msg.content.startsWith(prefix) && !msg.author.bot) {
         // logger.debug('here')
 
         const args = msg.content.slice(1).split(' ').map(e => e.trim())
-        const command = args.shift()
+        const command = args.shift().split('\n')[0]
 
         // Try to execute a command and suggest closest one if none found
         try {
