@@ -1,12 +1,14 @@
 import { BaseCommand } from '../../headers/interfaces'
-import { embed } from '../../headers/utility'
+import { embed, roleCheck } from '../../headers/utility'
 import { MessageEmbed } from 'discord.js'
 const sMsg = 'Эмбед-билдер'
 
 /** @example Usage: `.say {json data}` */
 const command: BaseCommand = {
     foo: async (msg, args, client) => {
-        // if(utl.roles.privilage(msg.member, msg.guild.roles.cache.get(constants.roles.curator))) {
+        if (!roleCheck(msg, sMsg, 'admin'))
+            return
+
         args.forEach(a => {
             if (a == '')
                 a = '\n'
