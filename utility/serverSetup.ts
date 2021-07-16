@@ -19,8 +19,9 @@ export async function setupServer(guild: Guild): Promise<void> {
     const firstChannel = guild.channels.cache.get(getDefaultChannel(guild).id) as TextChannel
     firstChannel.send(new MessageEmbed()
         .setTitle('Спасибо что добавили бота Kantō!'))
-    await Connection.getConnection().set(guild.id, 'serverSettings', {
-        id: guild.id,
-        flags: ['default']
-    } as Server)
+    if (await Connection.getConnection().get(guild.id, 'serverSettings') === {})
+        await Connection.getConnection().set(guild.id, 'serverSettings', {
+            id: 'serverSettings',
+            flags: ['default']
+        } as Server)
 }

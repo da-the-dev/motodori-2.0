@@ -1,7 +1,7 @@
 import { MessageButton, MessageButtonOptions } from 'discord-buttons'
 import { BaseCommand } from '../../headers/interfaces'
 import { DBServer, Menu, Button, Toggle, Page } from '../../headers/classes'
-import { embed, logger } from '../../headers/utility'
+import { embed } from '../../headers/utility'
 import { Message, MessageEmbed, TextChannel } from 'discord.js'
 import { updateCache } from '../../headers/globals'
 
@@ -221,7 +221,7 @@ const channelSetup = new Page()
             .setButton(new MessageButton(defaultButton)
                 .setLabel('Настройка приватных комнат')
                 .setID('privateRoomsSetup')
-                .setDisabled(true)
+                // .setDisabled(true)
             )
             .setAction(async button => {
                 await button.page.menu.sendPage('privateRoomsSetup')
@@ -251,7 +251,55 @@ const floodSetup = new Page()
         await saveChannelIDToSettings(page.menu, 'flood', 'text')
     })
     .setPrev(channelSetup)
+const privateRoomsSetup = new Page()
+    .setEmbed(new MessageEmbed({
+        'title': 'Настройка приватных комнат!',
+        'description': 'настройсука',
+        'color': 3092790
+    }))
+    .setName('privateRoomsSetup')
+    .setButtons([
+        new Button()
+            .setButton(new MessageButton(defaultButton)
+                .setLabel('Категория')
+                .setID('category')
+            )
+            .setAction(async b => {
+                await b.page.menu.sendPage('categorySetup')
+            }),
 
+        new Button()
+            .setButton(new MessageButton(defaultButton)
+                .setLabel('Канал-создатель')
+                .setID('creator')
+            )
+            .setAction(async b => {
+                await b.page.menu.sendPage('creatorSetup')
+            })
+    ])
+    .setPrev(channelSetup)
+const categorySetup = new Page()
+    .setName('categorySetup')
+    .setEmbed(new MessageEmbed({
+        'title': 'Категория',
+        'description': 'Теперь отправьте ID категории',
+        'color': 3092790
+    }))
+    .setAction(async page => {
+        await saveChannelIDToSettings(page.menu, 'privateRoomsCategory', 'category')
+    })
+    .setPrev(channelSetup)
+const creatorSetup = new Page()
+    .setName('creatorSetup')
+    .setEmbed(new MessageEmbed({
+        'title': 'Канал-создатель',
+        'description': 'Теперь отправьте ID канала',
+        'color': 3092790
+    }))
+    .setAction(async page => {
+        await saveChannelIDToSettings(page.menu, 'privateRoomsCreator', 'voice')
+    })
+    .setPrev(channelSetup)
 const channelSetupSuccess = new Page()
     .setName('channelSetupSuccess')
     .setEmbed(new MessageEmbed({
@@ -297,10 +345,32 @@ const togglables = new Page()
             })
             .setInit(async button => {
                 const server = await new DBServer(button.page.menu.guild.id).fetch()
-                logger.debug('generalProtection', server.data.settings.togglables.generalProtection)
                 button.setState(server.data.settings.togglables.generalProtection || false)
-                // if (!button.inited) {
-                // }
+            }),
+        new Toggle()
+            .setButton(new MessageButton(defaultButton)
+                .setLabel('Приватные комнаты')
+                .setID('privateRooms')
+            )
+            .setOn(async button => {
+                const server = await new DBServer(button.page.menu.guild.id).fetch()
+                server.data.settings.togglables.privateRooms = true
+                await server.save()
+                await updateCache(button.page.menu.guild.id)
+            })
+            .setOff(async button => {
+                const server = await new DBServer(button.page.menu.guild.id).fetch()
+                server.data.settings.togglables.privateRooms = false
+                await server.save()
+                await updateCache(button.page.menu.guild.id)
+            })
+            .setInit(async button => {
+                const server = await new DBServer(button.page.menu.guild.id).fetch()
+                if (!server.data.flags.includes('privateRooms')) {
+                    button.button.setDisabled(true)
+                    button.button.setStyle(2)
+                } else
+                    button.setState(server.data.settings.togglables.privateRooms || false)
             })
     ])
     .setPrev(settingsMenu)
@@ -326,6 +396,10 @@ const command: BaseCommand = {
                 channelSetup,
                 generalSetup,
                 floodSetup,
+                privateRoomsSetup,
+                categorySetup,
+                creatorSetup,
+
                 channelSetupSuccess,
                 channelSetupFail,
 

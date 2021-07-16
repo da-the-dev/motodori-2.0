@@ -1,4 +1,4 @@
-import { BaseCommand } from '../../headers/interfaces'
+import { BaseCommand, Flags } from '../../headers/interfaces'
 import { DBServer } from '../../headers/classes'
 import { logger, embed, } from '../../headers/utility'
 import { updateCache } from '../../headers/globals'
@@ -9,7 +9,7 @@ const command: BaseCommand = {
     foo: async (msg, args, client) => {
         if (msg.author.id === '315339158912761856') {
             const server = await new DBServer(msg.guild.id).fetch()
-            server.data.flags.push(args[0])
+            server.data.flags.push(args[0] as Flags)
             await server.save()
             logger.debug(server.data.flags)
             embed(msg, sMsg, `Добавлен флаг: ${args[0]}`)

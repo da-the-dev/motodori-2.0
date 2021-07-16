@@ -1,7 +1,8 @@
+import { Flags } from '../headers/interfaces'
 import { Settings } from './Settings'
 export declare interface Server {
     id: string,
-    flags: string[],
+    flags: Flags[],
     def: boolean,
     roles: string[],
     customRoles: CustomRole[],

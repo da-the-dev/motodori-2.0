@@ -55,6 +55,7 @@
     },
     "ignorePatterns": [
         "**/*.js",
-        "**/test.*"
+        "**/out",
+        "**/node_modules"
     ]
 }

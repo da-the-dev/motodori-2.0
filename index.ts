@@ -5,6 +5,7 @@ import { BaseCommand } from './headers/interfaces'
 import { Connection, RedCon } from './headers/classes'
 import { simStr, walk, setupServer, logger, redisHandler } from './headers/utility'
 import { cachedServers, updateCache } from './headers/globals'
+import { createPrivateRoom, deletePrivateRoom } from './utility/privateRooms'
 
 
 // Handling errors
@@ -66,7 +67,10 @@ client.on('guildCreate', async guild => {
     logger.info(`Bot was invited to a new guild "${guild.name}"`)
     await setupServer(guild)
 })
-
+client.on('voiceStateUpdate', async (oldState, newState) => {
+    await createPrivateRoom(oldState, newState)
+    await deletePrivateRoom(oldState, newState)
+})
 // Once the bot recieves a message
 client.on('message', async msg => {
     // if (msg.author.id === '315339158912761856' && msg.content.startsWith(prefix) && !msg.author.bot) {
