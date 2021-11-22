@@ -5,7 +5,10 @@
   "main": "out/index.js",
   "scripts": {
     "test": "nodemon out/test.js --delay 1",
-    "start": "nodemon . --delay 3"
+    "dev": "nodemon . --delay 3",
+    "build": "tsc",
+    "start": "node out/index.js",
+    "postinstall": "npm run build"
   },
   "author": "da_the_dev",
   "license": "GPL-3.0-or-later",
