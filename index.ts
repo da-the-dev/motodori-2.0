@@ -92,13 +92,17 @@ client.on('message', async msg => {
             logger.debug(flags, execCommand.flag, flags.includes(execCommand.flag))
 
             // If the server has the flag need for the command execution
-            if (flags.includes(execCommand.flag) || command === 'resetPerms')
-                if (args[0] === 'help')
-                    execCommand.help(msg)
-                else
-                    await execCommand.foo(msg, args, client)
+            if (args[0] === 'help')
+                execCommand.help(msg)
             else
-                msg.reply('На этом сервере недоступна эта команда!')
+                await execCommand.foo(msg, args, client)
+            // if (flags.includes(execCommand.flag) || command === 'resetPerms')
+            //     if (args[0] === 'help')
+            //         execCommand.help(msg)
+            //     else
+            //         await execCommand.foo(msg, args, client)
+            // else
+            //     msg.reply('На этом сервере недоступна эта команда!')
         } catch (err) {
             if (err.message === 'No command found') {
                 let closeCommand: string
