@@ -17,7 +17,7 @@
     "@types/mongodb": "^3.6.18",
     "canvas": "^2.8.0",
     "discord-buttons": "github:Tolfx/discord-buttons#dev",
-    "discord.js": "^12.5.3",
+    "discord.js": "^14.7.0",
     "dotenv": "^10.0.0",
     "handy-redis": "^2.2.1",
     "lodash": "^4.17.21",
